@@ -13,6 +13,7 @@
     --orange: #e8873a; --purple: #a870ee; --lightblue: #55c8e8;
     --yellow: #e8d045; --grey: #7a7a8c;
     --a1: #5599ee; --a2: #e8873a; --a3: #a870ee; --a4: #3ecf78;
+    --a5: #e055aa; --a6: #45c7b8; --a7: #d4a017; --a8: #ff6b57;
     --accent: #e8a045; --accent2: #c97b1e;
   }
   [data-theme="dark"] {
@@ -207,6 +208,66 @@
   #toast { position:fixed; bottom:24px; right:24px; background:var(--surface2); border:1px solid var(--border2); border-radius:var(--radius); color:var(--text); font-size:12px; padding:10px 16px; z-index:9998; opacity:0; transform:translateY(8px); transition:all 0.3s; pointer-events:none; box-shadow:0 4px 16px var(--shadow); }
   #toast.show { opacity:1; transform:translateY(0); }
 
+
+  /* MANAGE LOGINS + SUMMARY */
+  .admin-panel { padding:14px; overflow:auto; flex:1; }
+  .panel-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:12px; align-items:start; }
+  .panel-card { background:var(--surface); border:1px solid var(--border); border-left:4px solid var(--border2); border-radius:var(--radius); padding:14px; box-shadow:0 2px 10px var(--shadow); min-width:0; overflow:hidden; }
+  .panel-card h3 { font-family:var(--sans); font-size:15px; margin-bottom:10px; color:var(--text); }
+  .panel-row { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:8px; margin-bottom:8px; }
+  .panel-field { display:flex; flex-direction:column; gap:4px; min-width:0; }
+  .panel-field label { font-size:10px; color:var(--text3); text-transform:uppercase; letter-spacing:.7px; }
+  .panel-field input, .panel-field select { background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius2); color:var(--text); font-family:var(--mono); font-size:12px; padding:7px 8px; outline:none; width:100%; min-width:0; }
+  .agent-card-a1 { border-left-color:var(--a1); }
+  .agent-card-a2 { border-left-color:var(--a2); }
+  .agent-card-a3 { border-left-color:var(--a3); }
+  .agent-card-a4 { border-left-color:var(--a4); }
+  .agent-card-a1 h3, .stats-card.agent-card-a1 .stats-title { color:var(--a1); }
+  .agent-card-a2 h3, .stats-card.agent-card-a2 .stats-title { color:var(--a2); }
+  .agent-card-a3 h3, .stats-card.agent-card-a3 .stats-title { color:var(--a3); }
+  .agent-card-a4 h3, .stats-card.agent-card-a4 .stats-title { color:var(--a4); }
+  .agent-card-a1 .stat-value { color:var(--a1); }
+  .agent-card-a2 .stat-value { color:var(--a2); }
+  .agent-card-a3 .stat-value { color:var(--a3); }
+  .agent-card-a4 .stat-value { color:var(--a4); }
+  .agent-card-a5 { border-left-color:var(--a5); }
+  .agent-card-a6 { border-left-color:var(--a6); }
+  .agent-card-a7 { border-left-color:var(--a7); }
+  .agent-card-a8 { border-left-color:var(--a8); }
+
+  .agent-card-a5 h3, .stats-card.agent-card-a5 .stats-title { color:var(--a5); }
+  .agent-card-a6 h3, .stats-card.agent-card-a6 .stats-title { color:var(--a6); }
+  .agent-card-a7 h3, .stats-card.agent-card-a7 .stats-title { color:var(--a7); }
+  .agent-card-a8 h3, .stats-card.agent-card-a8 .stats-title { color:var(--a8); }
+
+  .agent-card-a5 .stat-value { color:var(--a5); }
+  .agent-card-a6 .stat-value { color:var(--a6); }
+  .agent-card-a7 .stat-value { color:var(--a7); }
+  .agent-card-a8 .stat-value { color:var(--a8); }
+
+  select.agent-sel.a5 { background:rgba(224,85,170,0.15); color:var(--a5); border-color:rgba(224,85,170,0.4); }
+  select.agent-sel.a6 { background:rgba(69,199,184,0.15); color:var(--a6); border-color:rgba(69,199,184,0.4); }
+  select.agent-sel.a7 { background:rgba(212,160,23,0.15); color:var(--a7); border-color:rgba(212,160,23,0.4); }
+  select.agent-sel.a8 { background:rgba(255,107,87,0.15); color:var(--a8); border-color:rgba(255,107,87,0.4); }
+
+  @media (max-width:700px) { .panel-grid { grid-template-columns:1fr; } .panel-row { grid-template-columns:1fr; } }
+  .panel-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+  .small-btn { border-radius:var(--radius2); font-family:var(--mono); font-size:11px; padding:6px 10px; cursor:pointer; border:1px solid var(--border2); background:transparent; color:var(--text2); }
+  .small-btn.primary { background:var(--accent); color:#0f0f13; border-color:var(--accent); font-weight:600; }
+  .small-btn.danger:hover { color:var(--red); border-color:var(--red); }
+  .small-btn:hover { border-color:var(--accent); color:var(--accent); }
+  .agent-status-pill { display:inline-block; border-radius:20px; padding:2px 8px; font-size:10px; margin-left:6px; }
+  .agent-status-pill.active { color:var(--green); border:1px solid var(--green); }
+  .agent-status-pill.inactive { color:var(--text3); border:1px solid var(--border2); }
+  .stats-card { background:var(--surface); border:1px solid var(--border); border-left:4px solid var(--border2); border-radius:var(--radius); padding:14px; min-width:0; overflow:hidden; }
+  .stats-card.overall { border-color:var(--accent); border-left-color:var(--accent); }
+  .stats-title { font-family:var(--sans); font-weight:700; font-size:15px; margin-bottom:10px; color:var(--text); }
+  .stats-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+  .stat { background:var(--surface2); border-radius:var(--radius2); padding:8px; }
+  .stat-label { font-size:10px; color:var(--text3); text-transform:uppercase; letter-spacing:.5px; }
+  .stat-value { font-family:var(--sans); font-size:20px; font-weight:800; margin-top:2px; color:var(--accent); }
+  .summary-note { color:var(--text2); font-size:11px; line-height:1.5; margin-bottom:12px; }
+
   /* SCROLLBAR */
   ::-webkit-scrollbar { width:6px; height:6px; }
   ::-webkit-scrollbar-track { background:var(--bg); }
@@ -301,6 +362,44 @@
     </div>
   </div>
   <div class="tab-bar" id="tab-bar"></div>
+
+
+  <!-- MANAGE LOGINS -->
+  <div class="tab-content" id="tab-manage">
+    <div class="toolbar">
+      <div class="toolbar-title">Manage Logins</div>
+      <span class="lead-count">Admin Only</span>
+      <div class="toolbar-sep"></div>
+      <button class="upload-btn" onclick="addAgentTab()">+ Add Agent Tab</button>
+      <button class="export-btn" onclick="savePortalSettings()">✓ Save Login Settings</button>
+    </div>
+    <div class="admin-panel">
+      <div class="summary-note">Manage agent tab names, login usernames/passwords, and active status. Inactivating a tab hides it but keeps historical lead data intact.</div>
+      <div id="manage-agent-list" class="panel-grid"></div>
+    </div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="tab-content" id="tab-summary">
+    <div class="toolbar">
+      <div class="toolbar-title">Summary Dashboard</div>
+      <span class="lead-count" id="summary-count">0 leads</span>
+      <div class="toolbar-sep"></div>
+      <button class="export-btn" onclick="exportSummaryCSV()">↓ Export Summary CSV</button>
+    </div>
+    <div class="filter-bar">
+      <span class="filter-label">Range:</span>
+      <select class="filter-sel" id="summary-range" onchange="renderSummary()">
+        <option value="all">All Time</option>
+        <option value="week">This Week</option>
+        <option value="today">Today</option>
+      </select>
+      <span class="search-count">Note: date ranges become more useful as newly changed leads receive timestamps.</span>
+    </div>
+    <div class="admin-panel">
+      <div id="summary-cards" class="panel-grid"></div>
+    </div>
+  </div>
 
   <!-- MASTERLIST -->
   <div class="tab-content" id="tab-masterlist">
@@ -398,17 +497,23 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const LEADS_DOC = db.collection('portal').doc('masterlist');
+const SETTINGS_DOC = db.collection('portal').doc('settings');
 
 // ── CONSTANTS ──
-const USERS = {
+let USERS = {
   admin:  { pass:'admin123', role:'admin',  label:'Admin (Lead Owner)' },
   agent1: { pass:'agent123', role:'agent1', label:'Agent 1' },
   agent2: { pass:'agent223', role:'agent2', label:'Agent 2' },
   agent3: { pass:'agent323', role:'agent3', label:'Agent 3' },
   agent4: { pass:'agent423', role:'agent4', label:'Agent 4' },
 };
-const AGENTS = ['Agent 1','Agent 2','Agent 3','Agent 4'];
-const AGENT_COLORS = { 'Agent 1':'a1','Agent 2':'a2','Agent 3':'a3','Agent 4':'a4' };
+let AGENTS = ['Agent 1','Agent 2','Agent 3','Agent 4'];
+const AGENT_COLOR_CLASSES = ['a1','a2','a3','a4','a5','a6','a7','a8'];
+function agentColorClassByIndex(i){ return AGENT_COLOR_CLASSES[i % AGENT_COLOR_CLASSES.length]; }
+function agentColorClassByName(name){
+  const idx = AGENTS.indexOf(name);
+  return idx >= 0 ? agentColorClassByIndex(idx) : 'unassigned';
+}
 
 const COL_HEADERS = [
   'Lead Owner','Assigned Agent','Author','Book Title',
@@ -460,6 +565,145 @@ let currentUser = null, leads = [], _suppressRemoteRender = false, _unsubscribe 
 let mlFilters = { agent:'', status:'' };
 const agentSearch = {1:'',2:'',3:'',4:''};
 const agentStatusFilter = {1:'',2:'',3:'',4:''};
+
+// ── PORTAL SETTINGS ──
+function defaultSettings() {
+  return {
+    agents: AGENTS.map((name,i)=>({ name, username:`agent${i+1}`, password:USERS[`agent${i+1}`]?.pass||'agent123', active:true }))
+  };
+}
+function applyPortalSettings(settings) {
+  if(!settings || !Array.isArray(settings.agents) || !settings.agents.length) settings=defaultSettings();
+  AGENTS = settings.agents.map(a=>a.name || 'Agent');
+  const adminPass = USERS.admin?.pass || 'admin123';
+  USERS = { admin:{ pass:adminPass, role:'admin', label:'Admin (Lead Owner)' } };
+  settings.agents.forEach((a,i)=>{
+    USERS[`agent${i+1}`] = { pass:a.password||'agent123', role:`agent${i+1}`, label:a.name||`Agent ${i+1}`, username:a.username||`agent${i+1}`, active:a.active!==false };
+  });
+}
+async function loadPortalSettings() {
+  try {
+    const doc = await SETTINGS_DOC.get();
+    applyPortalSettings(doc.exists ? doc.data() : defaultSettings());
+  } catch(e) { console.error(e); applyPortalSettings(defaultSettings()); }
+}
+function settingsPayloadFromUI() {
+  const cards=[...document.querySelectorAll('[data-agent-card]')];
+  return { agents: cards.map((card,i)=>({
+    name: card.querySelector('.m-name').value.trim() || `Agent ${i+1}`,
+    username: card.querySelector('.m-user').value.trim() || `agent${i+1}`,
+    password: card.querySelector('.m-pass').value || 'agent123',
+    active: card.querySelector('.m-active').value === 'active'
+  })) };
+}
+async function savePortalSettings() {
+  const oldAgents=[...AGENTS];
+  const payload=settingsPayloadFromUI();
+
+  const adminPassField=document.querySelector('.admin-pass');
+  if(adminPassField){
+    USERS.admin.pass = adminPassField.value || 'admin123';
+  }
+  // migrate assigned leads when an agent tab is renamed
+  payload.agents.forEach((a,i)=>{
+    const old=oldAgents[i];
+    if(old && old!==a.name) leads.forEach(l=>{ if(l['Assigned Agent']===old) l['Assigned Agent']=a.name; });
+  });
+  await SETTINGS_DOC.set(payload);
+  applyPortalSettings(payload);
+  saveState();
+  buildTabs(); renderAll(); renderLoginManager();
+  toast('✓ Login settings saved');
+}
+function renderLoginManager() {
+  const root=document.getElementById('manage-agent-list'); if(!root) return;
+  root.innerHTML='';
+
+  // Admin Card
+  const adminCard=document.createElement('div');
+  adminCard.className='panel-card';
+  adminCard.innerHTML=`<h3>Admin Portal<span class="agent-status-pill active">System</span></h3>
+    <div class="panel-row">
+      <div class="panel-field"><label>Username</label><input class="admin-user" value="admin" disabled></div>
+      <div class="panel-field"><label>Password</label><input class="admin-pass" type="password" value="${escapeAttr(USERS.admin?.pass||'admin123')}"></div>
+    </div>
+    <div class="panel-actions">
+      <button class="small-btn" onclick="togglePassword(this)">Show Password</button>
+    </div>`;
+  root.appendChild(adminCard);
+
+  AGENTS.forEach((name,i)=>{
+    const u=USERS[`agent${i+1}`]||{};
+    const card=document.createElement('div'); card.className=`panel-card agent-card-${agentColorClassByIndex(i)}`; card.dataset.agentCard=i+1;
+    card.innerHTML=`<h3>${name}<span class="agent-status-pill ${u.active!==false?'active':'inactive'}">${u.active!==false?'Active':'Inactive'}</span></h3>
+      <div class="panel-row">
+        <div class="panel-field"><label>Tab Name</label><input class="m-name" value="${escapeAttr(name)}"></div>
+        <div class="panel-field"><label>Status</label><select class="m-active"><option value="active" ${u.active!==false?'selected':''}>Active</option><option value="inactive" ${u.active===false?'selected':''}>Inactive</option></select></div>
+      </div>
+      <div class="panel-row">
+        <div class="panel-field"><label>Username</label><input class="m-user" value="${escapeAttr(u.username||`agent${i+1}`)}"></div>
+        <div class="panel-field"><label>Password</label><input class="m-pass" type="password" value="${escapeAttr(u.pass||'agent123')}"></div>
+      </div>
+      <div class="panel-actions">
+        <button class="small-btn" onclick="togglePassword(this)">Show Password</button>
+        <button class="small-btn danger" onclick="deactivateAgent(${i})">Deactivate Instead of Delete</button>
+        <button class="small-btn danger" onclick="deleteAgentTab(${i})">Delete Tab</button>
+      </div>`;
+    root.appendChild(card);
+  });
+}
+function escapeAttr(s){ return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+function togglePassword(btn){ const inp=btn.closest('.panel-card').querySelector('.m-pass'); inp.type=inp.type==='password'?'text':'password'; btn.textContent=inp.type==='password'?'Show Password':'Hide Password'; }
+function addAgentTab(){
+  const n=AGENTS.length+1;
+  AGENTS.push(`Agent ${n}`);
+  USERS[`agent${n}`]={pass:'agent123',role:`agent${n}`,label:`Agent ${n}`,username:`agent${n}`,active:true};
+  renderLoginManager(); toast('New agent tab added. Click Save Login Settings.');
+}
+function deactivateAgent(i){
+  const card=document.querySelector(`[data-agent-card="${i+1}"]`); if(!card) return;
+  const hasLeads=leads.some(l=>l['Assigned Agent']===AGENTS[i]);
+  if(hasLeads && !confirm('This agent has assigned leads. The tab will be hidden, but history will be preserved. Continue?')) return;
+  card.querySelector('.m-active').value='inactive'; toast('Set to inactive. Click Save Login Settings.');
+}
+
+function deleteAgentTab(i){
+  const agentName=AGENTS[i];
+  const hasLeads=leads.some(l=>l['Assigned Agent']===agentName);
+
+  if(hasLeads){
+    alert('This tab still has assigned leads. Please reassign all leads before deleting.');
+    return;
+  }
+
+  if(!confirm(`Delete "${agentName}" permanently? This cannot be undone.`)) return;
+
+  AGENTS.splice(i,1);
+
+  const rebuilt={ admin: USERS.admin };
+  AGENTS.forEach((name,idx)=>{
+    const oldUser=USERS[`agent${idx+1}`] || USERS[`agent${i+1}`];
+    rebuilt[`agent${idx+1}`]={
+      pass: oldUser?.pass || 'agent123',
+      role:`agent${idx+1}`,
+      label:name,
+      username:oldUser?.username || `agent${idx+1}`,
+      active:oldUser?.active!==false
+    };
+  });
+
+  USERS=rebuilt;
+
+  renderLoginManager();
+  toast('Agent tab removed. Click Save Login Settings.');
+}
+
+function refreshAgentFilterOptions(){
+  const f=document.getElementById('f-agent'); if(!f) return;
+  const current=f.value; f.innerHTML='<option value="">All Agents</option><option value="unassigned">— Unassigned —</option>';
+  AGENTS.forEach(a=>{ const o=document.createElement('option'); o.value=a; o.textContent=a; f.appendChild(o); });
+  f.value=current;
+}
 
 // ── THEME ──
 function applyTheme(t) {
@@ -513,8 +757,9 @@ function doLogin() {
   const u=document.getElementById('login-user').value.trim().toLowerCase();
   const p=document.getElementById('login-pass').value;
   const err=document.getElementById('login-error');
-  if(USERS[u]&&USERS[u].pass===p) {
-    currentUser={username:u,...USERS[u]};
+  const userKey = Object.keys(USERS).find(k => k===u || (USERS[k].username||'').toLowerCase()===u);
+  if(userKey&&USERS[userKey].pass===p&&USERS[userKey].active!==false) {
+    currentUser={username:u,...USERS[userKey]};
     err.style.display='none';
     document.getElementById('login-screen').style.display='none';
     document.getElementById('app').style.display='flex';
@@ -534,15 +779,30 @@ function doLogout() {
 }
 
 // ── TABS ──
+function ensureAgentContainers() {
+  AGENTS.forEach((a,i)=>{
+    const id=`tab-agent${i+1}`;
+    if(!document.getElementById(id)) {
+      const div=document.createElement('div'); div.className='tab-content'; div.id=id;
+      document.getElementById('app').appendChild(div);
+    }
+  });
+}
+function activeAgentIndexes() {
+  return AGENTS.map((name,i)=>({name,i})).filter(x=>USERS[`agent${x.i+1}`] && USERS[`agent${x.i+1}`].active!==false);
+}
 function buildTabs() {
+  ensureAgentContainers(); refreshAgentFilterOptions();
   const bar=document.getElementById('tab-bar'); bar.innerHTML='';
   const tabs=[];
   if(currentUser.role==='admin') {
+    tabs.push({id:'manage',label:'⚙️ Manage Logins'});
+    tabs.push({id:'summary',label:'📊 Summary'});
     tabs.push({id:'masterlist',label:'📋 Masterlist'});
-    AGENTS.forEach((a,i)=>tabs.push({id:`agent${i+1}`,label:`👤 ${a}`}));
+    activeAgentIndexes().forEach(({name,i})=>tabs.push({id:`agent${i+1}`,label:`👤 ${name}`}));
   } else {
-    const idx=currentUser.role.replace('agent','');
-    tabs.push({id:`agent${idx}`,label:`👤 Agent ${idx}`});
+    const idx=parseInt(currentUser.role.replace('agent',''));
+    tabs.push({id:`agent${idx}`,label:`👤 ${AGENTS[idx-1]||currentUser.label}`});
   }
   tabs.forEach((t,i)=>{
     const btn=document.createElement('button');
@@ -619,8 +879,8 @@ function passesFilter(lead) {
 
 // ── RENDER ALL ──
 function renderAll() {
-  if(currentUser&&currentUser.role==='admin') renderMasterlist();
-  for(let i=1;i<=4;i++) { if(document.getElementById(`tab-agent${i}`)) renderAgent(i); }
+  if(currentUser&&currentUser.role==='admin') { renderLoginManager(); renderSummary(); renderMasterlist(); }
+  AGENTS.forEach((_,i)=>{ if(document.getElementById(`tab-agent${i+1}`)) renderAgent(i+1); });
 }
 
 // ══════════════════════════════════════════
@@ -683,9 +943,9 @@ function renderMasterlist() {
     const agSel=document.createElement('select'); agSel.className='agent-sel';
     const eOpt=document.createElement('option'); eOpt.value=''; eOpt.textContent='— Unassigned —'; agSel.appendChild(eOpt);
     AGENTS.forEach(a=>{ const o=document.createElement('option'); o.value=a; o.textContent=a; if(lead['Assigned Agent']===a) o.selected=true; agSel.appendChild(o); });
-    const setAgColor=v=>{ agSel.className='agent-sel '+(AGENT_COLORS[v]||'unassigned'); };
+    const setAgColor=v=>{ agSel.className='agent-sel '+(v ? agentColorClassByName(v) : 'unassigned'); };
     setAgColor(lead['Assigned Agent']);
-    agSel.addEventListener('change',()=>{ lead['Assigned Agent']=agSel.value; setAgColor(agSel.value); saveState(); for(let i=1;i<=4;i++) renderAgent(i); toast(`Assigned to ${agSel.value||'nobody'}`); });
+    agSel.addEventListener('change',()=>{ lead['Assigned Agent']=agSel.value; setAgColor(agSel.value); saveState(); AGENTS.forEach((_,i)=>renderAgent(i+1)); renderSummary(); toast(`Assigned to ${agSel.value||'nobody'}`); });
     tdAgt.appendChild(agSel); row.appendChild(tdAgt);
 
     // Author
@@ -739,15 +999,15 @@ function renderMasterlist() {
 //  AGENT TAB RENDER
 // ══════════════════════════════════════════
 function renderAgent(agentNum) {
-  const agentLabel=`Agent ${agentNum}`;
+  const agentLabel=AGENTS[agentNum-1] || `Agent ${agentNum}`;
   const container=document.getElementById(`tab-agent${agentNum}`); if(!container) return;
   const allLeads=leads.filter(l=>l['Assigned Agent']===agentLabel);
-  const agColors=['var(--a1)','var(--a2)','var(--a3)','var(--a4)'];
+  const agColors=['var(--a1)','var(--a2)','var(--a3)','var(--a4)','var(--a5)','var(--a6)','var(--a7)','var(--a8)'];
   container.innerHTML='';
 
   // Header
   const hdr=document.createElement('div'); hdr.className='agent-header';
-  hdr.innerHTML=`<div class="agent-avatar" style="background:${agColors[agentNum-1]}">${agentNum}</div><div class="agent-info"><div class="agent-name">${agentLabel}</div><div class="agent-sub">${allLeads.length} lead${allLeads.length!==1?'s':''} assigned</div></div>`;
+  hdr.innerHTML=`<div class="agent-avatar" style="background:${agColors[(agentNum-1)%agColors.length]}">${agentNum}</div><div class="agent-info"><div class="agent-name">${agentLabel}</div><div class="agent-sub">${allLeads.length} lead${allLeads.length!==1?'s':''} assigned</div></div>`;
   container.appendChild(hdr);
 
   // Color guide — always visible
@@ -853,6 +1113,7 @@ function rebuildAgentTable(agentNum, allLeads, tbody, countEl, stFil) {
         item.onclick=(e)=>{
           e.stopPropagation();
           lead[sk]=o.val;
+          lead[`_phoneStatus${pi+1}ChangedAt`]=new Date().toISOString();
           numSpan.style.color=o.val?PHONE_COLOR_MAP[o.val]:'var(--text)';
           psDrop.classList.remove('open');
           saveState();
@@ -912,7 +1173,7 @@ function syncMasterlistPhoneColor(gi, pi, statusVal) {
 
 function agentNumFromLead(lead) {
   const a=lead['Assigned Agent']; if(!a) return null;
-  return parseInt(a.replace('Agent ',''));
+  const idx=AGENTS.indexOf(a); return idx>=0 ? idx+1 : null;
 }
 
 function deleteLead(gi) {
@@ -945,7 +1206,7 @@ function makeLeadStatusSelect(lead, gi) {
   LEAD_STATUS_OPTS.forEach(o=>{ const opt=document.createElement('option'); opt.value=o.val; opt.textContent=o.label; if(o.val===(lead._leadStatus||'')) opt.selected=true; sel.appendChild(opt); });
   const applyStyle=v=>{ const info=LEAD_STATUS_MAP[v]; if(info){ sel.style.background=info.bg; sel.style.color=info.color; sel.style.borderColor='transparent'; } else { sel.style.background='var(--surface3)'; sel.style.color='var(--text)'; sel.style.borderColor='var(--border)'; } };
   applyStyle(lead._leadStatus||'');
-  sel.addEventListener('change',()=>{ lead._leadStatus=sel.value; lead['Lead Status']=LEAD_STATUS_MAP[sel.value]?.label||''; applyStyle(sel.value); saveState(); renderMasterlist(); });
+  sel.addEventListener('change',()=>{ lead._leadStatus=sel.value; lead['Lead Status']=LEAD_STATUS_MAP[sel.value]?.label||''; lead._statusChangedAt=new Date().toISOString(); applyStyle(sel.value); saveState(); renderMasterlist(); renderSummary(); });
   return sel;
 }
 
@@ -972,6 +1233,61 @@ function openModal(lead) {
 function closeModal() { document.getElementById('profile-modal').classList.remove('open'); }
 document.getElementById('profile-modal').addEventListener('click',e=>{ if(e.target===document.getElementById('profile-modal')) closeModal(); });
 
+// ── SUMMARY DASHBOARD ──
+function inSummaryRange(lead) {
+  const range=document.getElementById('summary-range')?.value || 'all';
+  if(range==='all') return true;
+  const dates=[lead._statusChangedAt, lead._phoneStatus1ChangedAt, lead._phoneStatus2ChangedAt, lead._phoneStatus3ChangedAt].filter(Boolean).map(d=>new Date(d));
+  if(!dates.length) return false;
+  const now=new Date();
+  const start=new Date(now);
+  if(range==='today') start.setHours(0,0,0,0);
+  if(range==='week') { const day=start.getDay(); start.setDate(start.getDate()-day); start.setHours(0,0,0,0); }
+  return dates.some(d=>d>=start && d<=now);
+}
+function calcStats(rows) {
+  const phoneStatuses=[]; rows.forEach(l=>[1,2,3].forEach(i=>{ const phone=l[`Phone ${i}`]; if(phone) phoneStatuses.push(l[`_phoneStatus${i}`]||''); }));
+  const totalPhones=phoneStatuses.length;
+  const tta=phoneStatuses.filter(s=>s==='TTA').length;
+  const wrong=phoneStatuses.filter(s=>s==='WN').length;
+  const vm=phoneStatuses.filter(s=>s==='VM').length;
+  const noans=phoneStatuses.filter(s=>s==='NA').length;
+  const booked=rows.filter(l=>l._leadStatus==='meeting').length;
+  const closed=rows.filter(l=>l._leadStatus==='closed').length;
+  const interested=rows.filter(l=>l._leadStatus==='interest').length;
+  const lost=rows.filter(l=>l._leadStatus==='lost'||l._leadStatus==='notint').length;
+  return { leads:rows.length, booked, closed, interested, lost, tta, wrong, vm, noans, correctRate: totalPhones?Math.round((tta/totalPhones)*100):0 };
+}
+function statsCard(title, stats, overall=false, colorClass='') {
+  return `<div class="stats-card ${overall?'overall':''} ${colorClass?`agent-card-${colorClass}`:''}"><div class="stats-title">${title}</div><div class="stats-grid">
+    <div class="stat"><div class="stat-label">Total Leads</div><div class="stat-value">${stats.leads}</div></div>
+    <div class="stat"><div class="stat-label">Closed</div><div class="stat-value">${stats.closed}</div></div>
+    <div class="stat"><div class="stat-label">Booked Mtgs</div><div class="stat-value">${stats.booked}</div></div>
+    <div class="stat"><div class="stat-label">Interested</div><div class="stat-value">${stats.interested}</div></div>
+    <div class="stat"><div class="stat-label">Correct # Rate</div><div class="stat-value">${stats.correctRate}%</div></div>
+    <div class="stat"><div class="stat-label">Wrong / VM / NA</div><div class="stat-value">${stats.wrong}/${stats.vm}/${stats.noans}</div></div>
+  </div></div>`;
+}
+function renderSummary() {
+  const root=document.getElementById('summary-cards'); if(!root) return;
+  const scoped=leads.filter(inSummaryRange);
+  document.getElementById('summary-count').textContent=`${scoped.length} lead${scoped.length!==1?'s':''}`;
+  let html=statsCard('Overall Performance', calcStats(scoped), true);
+  activeAgentIndexes().forEach(({name,i})=>{
+    html+=statsCard(name, calcStats(scoped.filter(l=>l['Assigned Agent']===name)), false, agentColorClassByIndex(i));
+  });
+  root.innerHTML=html;
+}
+function exportSummaryCSV() {
+  const scoped=leads.filter(inSummaryRange);
+  const rows=[['Agent','Total Leads','Closed','Booked Meetings','Interested','Lost/Not Interested','Correct Numbers','Wrong Numbers','Voicemails','No Answer','Correct Number Rate']];
+  const add=(name,stats)=>rows.push([name,stats.leads,stats.closed,stats.booked,stats.interested,stats.lost,stats.tta,stats.wrong,stats.vm,stats.noans,stats.correctRate+'%']);
+  add('Overall',calcStats(scoped));
+  activeAgentIndexes().forEach(({name})=>add(name,calcStats(scoped.filter(l=>l['Assigned Agent']===name))));
+  const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download=`lead_summary_${new Date().toISOString().slice(0,10)}.csv`; a.click();
+}
+
 // ── EXPORT / CLEAR ──
 function exportMasterlist() {
   if(!leads.length){ toast('No leads to export'); return; }
@@ -990,7 +1306,8 @@ let toastTimer;
 function toast(msg) { const e=document.getElementById('toast'); e.textContent=msg; e.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>e.classList.remove('show'),2500); }
 
 // ── INIT ──
-window.addEventListener('load',()=>{
+window.addEventListener('load', async ()=>{
+  await loadPortalSettings();
   setTimeout(()=>{
     const ov=document.getElementById('loading-overlay');
     ov.classList.add('hidden');
