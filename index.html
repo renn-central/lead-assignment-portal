@@ -6,513 +6,303 @@
 <title>Lead Assignment Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-  /* ══════════════════════════════════════════
-     THEME TOKENS
-  ══════════════════════════════════════════ */
   :root {
-    --radius: 8px;
-    --radius2: 4px;
-    --mono: 'DM Mono', monospace;
-    --sans: 'Syne', sans-serif;
-    --green: #3ecf78;
-    --red: #e05555;
-    --blue: #5599ee;
-    --orange: #e8873a;
-    --purple: #a870ee;
-    --lightblue: #55c8e8;
-    --yellow: #e8d045;
-    --a1: #5599ee;
-    --a2: #e8873a;
-    --a3: #a870ee;
-    --a4: #3ecf78;
-    --accent: #e8a045;
-    --accent2: #c97b1e;
+    --radius: 8px; --radius2: 4px;
+    --mono: 'DM Mono', monospace; --sans: 'Syne', sans-serif;
+    --green: #3ecf78; --red: #e05555; --blue: #5599ee;
+    --orange: #e8873a; --purple: #a870ee; --lightblue: #55c8e8;
+    --yellow: #e8d045; --grey: #7a7a8c;
+    --a1: #5599ee; --a2: #e8873a; --a3: #a870ee; --a4: #3ecf78;
+    --accent: #e8a045; --accent2: #c97b1e;
   }
-
-  /* ── DARK ── */
   [data-theme="dark"] {
-    --bg: #0f0f13;
-    --surface: #16161d;
-    --surface2: #1e1e28;
-    --surface3: #26262f;
-    --border: #2e2e3a;
-    --border2: #3a3a48;
-    --text: #e8e8f0;
-    --text2: #9090a8;
-    --text3: #5a5a72;
-    --shadow: rgba(0,0,0,0.4);
-    --row-alt: rgba(255,255,255,0.01);
+    --bg:#0f0f13; --surface:#16161d; --surface2:#1e1e28; --surface3:#26262f;
+    --border:#2e2e3a; --border2:#3a3a48;
+    --text:#e8e8f0; --text2:#9090a8; --text3:#5a5a72;
+    --shadow:rgba(0,0,0,0.4); --row-alt:rgba(255,255,255,0.01);
   }
-
-  /* ── LIGHT ── */
   [data-theme="light"] {
-    --bg: #f0f0f5;
-    --surface: #ffffff;
-    --surface2: #f5f5fa;
-    --surface3: #eaeaf2;
-    --border: #d8d8e8;
-    --border2: #c8c8da;
-    --text: #1a1a2e;
-    --text2: #52527a;
-    --text3: #9898b8;
-    --shadow: rgba(0,0,0,0.1);
-    --row-alt: rgba(0,0,0,0.015);
+    --bg:#f0f0f5; --surface:#ffffff; --surface2:#f5f5fa; --surface3:#eaeaf2;
+    --border:#d8d8e8; --border2:#c8c8da;
+    --text:#1a1a2e; --text2:#52527a; --text3:#9898b8;
+    --shadow:rgba(0,0,0,0.1); --row-alt:rgba(0,0,0,0.015);
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--text); font-family:var(--mono); font-size:13px; min-height:100vh; overflow-x:hidden; transition:background 0.25s,color 0.25s; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 13px;
-    min-height: 100vh;
-    overflow-x: hidden;
-    transition: background 0.25s, color 0.25s;
-  }
+  /* THEME TOGGLE */
+  .theme-toggle { background:var(--surface3); border:1px solid var(--border2); border-radius:20px; cursor:pointer; display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:11px; color:var(--text2); padding:4px 10px; transition:all 0.2s; white-space:nowrap; }
+  .theme-toggle:hover { border-color:var(--accent); color:var(--accent); }
 
-  /* ─── THEME TOGGLE ─── */
-  .theme-toggle {
-    background: var(--surface3);
-    border: 1px solid var(--border2);
-    border-radius: 20px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text2);
-    padding: 4px 10px;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-  .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
-  .theme-toggle .icon { font-size: 13px; }
+  /* LOADING */
+  #loading-overlay { position:fixed; inset:0; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:10000; transition:opacity 0.3s; }
+  #loading-overlay.hidden { opacity:0; pointer-events:none; }
+  .loading-spinner { width:32px; height:32px; border:3px solid var(--border2); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .loading-text { font-size:12px; color:var(--text2); }
 
-  /* ─── LOADING OVERLAY ─── */
-  #loading-overlay {
-    position: fixed; inset: 0;
-    background: var(--bg);
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 14px; z-index: 10000;
-    transition: opacity 0.3s;
-  }
-  #loading-overlay.hidden { opacity: 0; pointer-events: none; }
-  .loading-spinner {
-    width: 32px; height: 32px;
-    border: 3px solid var(--border2);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loading-text { font-size: 12px; color: var(--text2); }
+  /* LOGIN */
+  #login-screen { position:fixed; inset:0; background:var(--bg); display:flex; align-items:center; justify-content:center; z-index:9999; }
+  .login-box { background:var(--surface); border:1px solid var(--border2); border-radius:16px; padding:48px 40px; width:360px; display:flex; flex-direction:column; gap:24px; box-shadow:0 8px 32px var(--shadow); }
+  .login-logo { font-family:var(--sans); font-size:22px; font-weight:800; color:var(--accent); letter-spacing:-0.5px; }
+  .login-logo span { color:var(--text2); font-weight:400; font-size:13px; display:block; margin-top:4px; font-family:var(--mono); }
+  .login-field { display:flex; flex-direction:column; gap:6px; }
+  .login-field label { font-size:11px; color:var(--text3); text-transform:uppercase; letter-spacing:1px; }
+  .login-field input { background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius2); color:var(--text); font-family:var(--mono); font-size:13px; padding:10px 12px; outline:none; transition:border-color 0.2s; }
+  .login-field input:focus { border-color:var(--accent); }
+  .login-btn { background:var(--accent); color:#0f0f13; border:none; border-radius:var(--radius2); font-family:var(--sans); font-weight:700; font-size:14px; padding:12px; cursor:pointer; transition:background 0.2s; }
+  .login-btn:hover { background:var(--accent2); }
+  .login-error { color:var(--red); font-size:12px; display:none; }
+  .login-theme { display:flex; justify-content:center; }
 
-  /* ─── LOGIN ─── */
-  #login-screen {
-    position: fixed; inset: 0;
-    background: var(--bg);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 9999;
-  }
-  .login-box {
-    background: var(--surface);
-    border: 1px solid var(--border2);
-    border-radius: 16px;
-    padding: 48px 40px;
-    width: 360px;
-    display: flex; flex-direction: column; gap: 24px;
-    box-shadow: 0 8px 32px var(--shadow);
-  }
-  .login-logo { font-family: var(--sans); font-size: 22px; font-weight: 800; color: var(--accent); letter-spacing: -0.5px; }
-  .login-logo span { color: var(--text2); font-weight: 400; font-size: 13px; display: block; margin-top: 4px; font-family: var(--mono); letter-spacing: 0; }
-  .login-field { display: flex; flex-direction: column; gap: 6px; }
-  .login-field label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; }
-  .login-field input {
-    background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius2);
-    color: var(--text); font-family: var(--mono); font-size: 13px; padding: 10px 12px; outline: none; transition: border-color 0.2s;
-  }
-  .login-field input:focus { border-color: var(--accent); }
-  .login-btn {
-    background: var(--accent); color: #0f0f13; border: none; border-radius: var(--radius2);
-    font-family: var(--sans); font-weight: 700; font-size: 14px; padding: 12px; cursor: pointer; transition: background 0.2s;
-  }
-  .login-btn:hover { background: var(--accent2); }
-  .login-error { color: var(--red); font-size: 12px; display: none; }
-  .login-theme { display: flex; justify-content: center; }
+  /* APP SHELL */
+  #app { display:none; flex-direction:column; height:100vh; }
 
-  /* ─── APP SHELL ─── */
-  #app { display: none; flex-direction: column; height: 100vh; }
-  #app.visible { display: flex; }
+  /* HEADER */
+  .app-header { background:var(--surface); border-bottom:1px solid var(--border); padding:10px 20px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+  .app-title { font-family:var(--sans); font-weight:800; font-size:18px; color:var(--accent); letter-spacing:-0.5px; }
+  .app-user { display:flex; align-items:center; gap:8px; }
+  .user-badge { background:var(--surface3); border:1px solid var(--border2); border-radius:20px; padding:4px 12px; font-size:12px; color:var(--text2); }
+  .logout-btn { background:transparent; border:1px solid var(--border2); border-radius:var(--radius2); color:var(--text3); font-family:var(--mono); font-size:11px; padding:5px 10px; cursor:pointer; transition:all 0.2s; }
+  .logout-btn:hover { border-color:var(--red); color:var(--red); }
+  .sync-dot { width:7px; height:7px; border-radius:50%; display:inline-block; background:var(--text3); transition:background 0.3s; }
+  .sync-dot.live { background:var(--green); box-shadow:0 0 6px var(--green); }
+  .sync-dot.saving { background:var(--yellow); }
+  .sync-dot.error { background:var(--red); }
+  .sync-label { font-size:10px; color:var(--text3); }
+  .toolbar-sep { width:1px; height:20px; background:var(--border2); margin:0 2px; }
 
-  /* ─── HEADER ─── */
-  .app-header {
-    background: var(--surface); border-bottom: 1px solid var(--border);
-    padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
-  }
-  .app-title { font-family: var(--sans); font-weight: 800; font-size: 18px; color: var(--accent); letter-spacing: -0.5px; }
-  .app-user { display: flex; align-items: center; gap: 8px; }
-  .user-badge { background: var(--surface3); border: 1px solid var(--border2); border-radius: 20px; padding: 4px 12px; font-size: 12px; color: var(--text2); }
-  .logout-btn {
-    background: transparent; border: 1px solid var(--border2); border-radius: var(--radius2);
-    color: var(--text3); font-family: var(--mono); font-size: 11px; padding: 5px 10px; cursor: pointer; transition: all 0.2s;
-  }
-  .logout-btn:hover { border-color: var(--red); color: var(--red); }
+  /* TABS */
+  .tab-bar { background:var(--surface); border-bottom:1px solid var(--border); display:flex; gap:2px; padding:0 16px; flex-shrink:0; }
+  .tab-btn { background:transparent; border:none; border-bottom:2px solid transparent; color:var(--text3); cursor:pointer; font-family:var(--mono); font-size:12px; padding:10px 16px; transition:all 0.2s; white-space:nowrap; }
+  .tab-btn:hover { color:var(--text2); }
+  .tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
 
-  /* ─── TABS ─── */
-  .tab-bar {
-    background: var(--surface); border-bottom: 1px solid var(--border);
-    display: flex; gap: 2px; padding: 0 16px; flex-shrink: 0;
-  }
-  .tab-btn {
-    background: transparent; border: none; border-bottom: 2px solid transparent;
-    color: var(--text3); cursor: pointer; font-family: var(--mono); font-size: 12px;
-    padding: 10px 16px; transition: all 0.2s; white-space: nowrap;
-  }
-  .tab-btn:hover { color: var(--text2); }
-  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  /* CONTENT */
+  .tab-content { flex:1; overflow:hidden; display:none; flex-direction:column; }
+  .tab-content.active { display:flex; }
 
-  /* ─── CONTENT ─── */
-  .tab-content { flex: 1; overflow: hidden; display: none; flex-direction: column; }
-  .tab-content.active { display: flex; }
+  /* TOOLBAR */
+  .toolbar { padding:10px 14px; display:flex; align-items:center; gap:8px; border-bottom:1px solid var(--border); flex-shrink:0; flex-wrap:wrap; background:var(--surface); }
+  .toolbar-title { font-family:var(--sans); font-weight:700; font-size:14px; color:var(--text); }
+  .lead-count { background:var(--surface3); border-radius:20px; padding:2px 10px; font-size:11px; color:var(--text2); }
+  .upload-btn, .export-btn, .clear-btn { border-radius:var(--radius2); font-family:var(--mono); font-size:11px; padding:6px 12px; cursor:pointer; transition:all 0.2s; }
+  .upload-btn { background:var(--accent); border:none; color:#0f0f13; font-weight:500; }
+  .upload-btn:hover { background:var(--accent2); }
+  .export-btn { background:transparent; border:1px solid var(--border2); color:var(--text2); }
+  .export-btn:hover { border-color:var(--green); color:var(--green); }
+  .clear-btn { background:transparent; border:1px solid var(--border2); color:var(--text3); }
+  .clear-btn:hover { border-color:var(--red); color:var(--red); }
+  #file-input { display:none; }
 
-  /* ─── TOOLBAR ─── */
-  .toolbar {
-    padding: 10px 14px; display: flex; align-items: center; gap: 8px;
-    border-bottom: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap;
-    background: var(--surface);
-  }
-  .toolbar-title { font-family: var(--sans); font-weight: 700; font-size: 14px; color: var(--text); }
-  .lead-count { background: var(--surface3); border-radius: 20px; padding: 2px 10px; font-size: 11px; color: var(--text2); }
-  .toolbar-sep { width: 1px; height: 20px; background: var(--border2); margin: 0 2px; }
+  /* FILTER BAR */
+  .filter-bar { padding:8px 14px; display:flex; align-items:center; gap:8px; border-bottom:1px solid var(--border); flex-shrink:0; flex-wrap:wrap; background:var(--surface2); }
+  .filter-label { font-size:10px; color:var(--text3); text-transform:uppercase; letter-spacing:0.8px; white-space:nowrap; }
+  select.filter-sel { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius2); color:var(--text2); font-family:var(--mono); font-size:11px; padding:4px 8px; cursor:pointer; outline:none; max-width:160px; }
+  select.filter-sel:focus { border-color:var(--accent); }
+  .filter-active { border-color:var(--accent) !important; color:var(--accent) !important; }
+  .clear-filters-btn { background:transparent; border:1px solid var(--border2); border-radius:var(--radius2); color:var(--text3); font-family:var(--mono); font-size:10px; padding:4px 8px; cursor:pointer; transition:all 0.2s; }
+  .clear-filters-btn:hover { border-color:var(--red); color:var(--red); }
+  .search-count { font-size:11px; color:var(--text3); }
 
-  /* ─── FILTER BAR ─── */
-  .filter-bar {
-    padding: 8px 14px; display: flex; align-items: center; gap: 8px;
-    border-bottom: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap;
-    background: var(--surface2);
-  }
-  .filter-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.8px; white-space: nowrap; }
-  select.filter-sel {
-    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius2);
-    color: var(--text2); font-family: var(--mono); font-size: 11px; padding: 4px 8px;
-    cursor: pointer; outline: none; max-width: 160px;
-  }
-  select.filter-sel:focus { border-color: var(--accent); }
-  .filter-active { border-color: var(--accent) !important; color: var(--accent) !important; }
-  .clear-filters-btn {
-    background: transparent; border: 1px solid var(--border2); border-radius: var(--radius2);
-    color: var(--text3); font-family: var(--mono); font-size: 10px; padding: 4px 8px; cursor: pointer; transition: all 0.2s;
-  }
-  .clear-filters-btn:hover { border-color: var(--red); color: var(--red); }
+  /* COLOR GUIDE */
+  .color-guide { padding:7px 14px; display:flex; align-items:center; gap:14px; border-bottom:1px solid var(--border); flex-shrink:0; flex-wrap:wrap; background:var(--bg); }
+  .guide-label { font-size:10px; color:var(--text3); text-transform:uppercase; letter-spacing:0.8px; white-space:nowrap; }
+  .guide-items { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .guide-item { display:flex; align-items:center; gap:5px; white-space:nowrap; }
+  .guide-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .guide-dot.gd-default { background:var(--text); border:1px solid var(--border2); }
+  .guide-dot.gd-tta { background:var(--green); }
+  .guide-dot.gd-wn  { background:var(--red); }
+  .guide-dot.gd-vm  { background:var(--blue); }
+  .guide-dot.gd-nis { background:var(--orange); }
+  .guide-dot.gd-na  { background:var(--purple); }
+  .guide-text { font-size:10px; color:var(--text2); }
 
-  /* ─── SEARCH BAR ─── */
-  .search-bar {
-    padding: 8px 14px; display: flex; align-items: center; gap: 8px;
-    border-bottom: 1px solid var(--border); flex-shrink: 0; background: var(--surface2);
-  }
-  .search-input {
-    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius2);
-    color: var(--text); font-family: var(--mono); font-size: 12px; padding: 6px 12px;
-    outline: none; transition: border-color 0.2s; flex: 1; max-width: 320px;
-  }
-  .search-input:focus { border-color: var(--accent); }
-  .search-count { font-size: 11px; color: var(--text3); }
+  /* SEARCH BAR */
+  .search-bar { padding:8px 14px; display:flex; align-items:center; gap:8px; border-bottom:1px solid var(--border); flex-shrink:0; background:var(--surface2); }
+  .search-input { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius2); color:var(--text); font-family:var(--mono); font-size:12px; padding:6px 12px; outline:none; transition:border-color 0.2s; flex:1; max-width:320px; }
+  .search-input:focus { border-color:var(--accent); }
 
-  .upload-btn, .export-btn, .clear-btn {
-    border-radius: var(--radius2); font-family: var(--mono); font-size: 11px;
-    padding: 6px 12px; cursor: pointer; transition: all 0.2s;
-  }
-  .upload-btn { background: var(--accent); border: none; color: #0f0f13; font-weight: 500; }
-  .upload-btn:hover { background: var(--accent2); }
-  .export-btn { background: transparent; border: 1px solid var(--border2); color: var(--text2); }
-  .export-btn:hover { border-color: var(--green); color: var(--green); }
-  .clear-btn { background: transparent; border: 1px solid var(--border2); color: var(--text3); }
-  .clear-btn:hover { border-color: var(--red); color: var(--red); }
-  #file-input { display: none; }
+  /* TABLE */
+  .table-wrap { flex:1; overflow:auto; position:relative; }
+  table { border-collapse:collapse; width:max-content; min-width:100%; }
+  thead th { background:var(--surface2); border-bottom:1px solid var(--border2); border-right:1px solid var(--border); color:var(--text3); font-size:10px; font-weight:500; letter-spacing:0.8px; padding:8px 10px; position:sticky; text-align:left; text-transform:uppercase; top:0; white-space:nowrap; z-index:10; }
 
-  /* ─── TABLE WRAPPER ─── */
-  .table-wrap { flex: 1; overflow: auto; position: relative; }
-
-  table { border-collapse: collapse; width: max-content; min-width: 100%; }
-
-  thead th {
-    background: var(--surface2); border-bottom: 1px solid var(--border2); border-right: 1px solid var(--border);
-    color: var(--text3); font-size: 10px; font-weight: 500; letter-spacing: 0.8px; padding: 8px 10px;
-    position: sticky; text-align: left; text-transform: uppercase; top: 0; white-space: nowrap; z-index: 10;
-  }
-
-  /* ─── FROZEN COLS — MASTERLIST ONLY ─── */
-  #ml-table thead th:nth-child(1) { left: 0; z-index: 22; min-width: 36px; width: 36px; }
-  #ml-table thead th:nth-child(2) { left: 36px; z-index: 21; min-width: 120px; }
-  #ml-table thead th:nth-child(3) { left: 156px; z-index: 21; min-width: 150px; }
-  #ml-table thead th:nth-child(4) { left: 306px; z-index: 21; min-width: 130px; }
-  #ml-table thead th:nth-child(5) { left: 436px; z-index: 21; min-width: 180px; border-right: 2px solid var(--accent2); }
-
-  #ml-table tbody td:nth-child(1) { left: 0; position: sticky; background: var(--surface2); z-index: 5; min-width: 36px; width: 36px; }
-  #ml-table tbody td:nth-child(2) { left: 36px; position: sticky; z-index: 4; background: var(--surface); min-width: 120px; }
-  #ml-table tbody td:nth-child(3) { left: 156px; position: sticky; z-index: 4; background: var(--surface); min-width: 150px; }
-  #ml-table tbody td:nth-child(4) { left: 306px; position: sticky; z-index: 4; background: var(--surface); min-width: 130px; }
-  #ml-table tbody td:nth-child(5) { left: 436px; position: sticky; z-index: 4; background: var(--surface); min-width: 180px; border-right: 2px solid var(--accent2); }
-
+  /* FROZEN COLS — MASTERLIST ONLY (3 frozen: #, del, Lead Owner, Assigned Agent) */
+  #ml-table thead th:nth-child(1) { left:0;    z-index:22; min-width:36px; width:36px; }
+  #ml-table thead th:nth-child(2) { left:36px; z-index:21; min-width:30px; width:30px; }
+  #ml-table thead th:nth-child(3) { left:66px; z-index:21; min-width:120px; }
+  #ml-table thead th:nth-child(4) { left:186px; z-index:21; min-width:150px; border-right:2px solid var(--accent2); }
+  #ml-table tbody td:nth-child(1) { left:0;    position:sticky; background:var(--surface2); z-index:5; min-width:36px; width:36px; }
+  #ml-table tbody td:nth-child(2) { left:36px; position:sticky; z-index:4; background:var(--surface); min-width:30px; width:30px; }
+  #ml-table tbody td:nth-child(3) { left:66px; position:sticky; z-index:4; background:var(--surface); min-width:120px; }
+  #ml-table tbody td:nth-child(4) { left:186px; position:sticky; z-index:4; background:var(--surface); min-width:150px; border-right:2px solid var(--accent2); }
   #ml-table tbody tr:hover td:nth-child(2),
   #ml-table tbody tr:hover td:nth-child(3),
-  #ml-table tbody tr:hover td:nth-child(4),
-  #ml-table tbody tr:hover td:nth-child(5) { background: var(--surface2); }
+  #ml-table tbody tr:hover td:nth-child(4) { background:var(--surface2); }
 
-  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
-  tbody tr:hover { background: var(--surface2); }
-  tbody tr:nth-child(even) { background: var(--row-alt); }
-  tbody tr:nth-child(even):hover { background: var(--surface2); }
+  tbody tr { border-bottom:1px solid var(--border); transition:background 0.15s; }
+  tbody tr:hover { background:var(--surface2); }
+  tbody tr:nth-child(even) { background:var(--row-alt); }
+  tbody tr:nth-child(even):hover { background:var(--surface2); }
+  td { border-right:1px solid var(--border); color:var(--text); font-size:12px; max-width:180px; overflow:hidden; padding:6px 10px; text-overflow:ellipsis; vertical-align:middle; white-space:nowrap; }
+  td.row-num { background:var(--surface2); color:var(--text3); font-size:10px; text-align:center; }
 
-  td {
-    border-right: 1px solid var(--border); color: var(--text); font-size: 12px;
-    max-width: 180px; overflow: hidden; padding: 6px 10px;
-    text-overflow: ellipsis; vertical-align: middle; white-space: nowrap;
+  /* AGENT DROPDOWN */
+  select.agent-sel { border-radius:var(--radius2); font-family:var(--mono); font-size:11px; padding:3px 8px; cursor:pointer; outline:none; border:1px solid transparent; font-weight:500; min-width:130px; }
+  select.agent-sel.unassigned { background:var(--surface3); color:var(--text2); border-color:var(--border); }
+  select.agent-sel.a1 { background:rgba(85,153,238,0.15); color:var(--a1); border-color:rgba(85,153,238,0.4); }
+  select.agent-sel.a2 { background:rgba(232,135,58,0.15); color:var(--a2); border-color:rgba(232,135,58,0.4); }
+  select.agent-sel.a3 { background:rgba(168,112,238,0.15); color:var(--a3); border-color:rgba(168,112,238,0.4); }
+  select.agent-sel.a4 { background:rgba(62,207,120,0.15); color:var(--a4); border-color:rgba(62,207,120,0.4); }
+
+  /* LEAD STATUS SELECT */
+  select.cell-select { background:var(--surface3); border:1px solid var(--border); border-radius:var(--radius2); color:var(--text); font-family:var(--mono); font-size:11px; padding:3px 6px; cursor:pointer; outline:none; max-width:160px; }
+  select.cell-select:focus { border-color:var(--accent); }
+
+  /* EDITABLE */
+  td[contenteditable="true"] { outline:none; cursor:text; }
+  td[contenteditable="true"]:focus { background:var(--surface3); box-shadow:inset 0 0 0 1px var(--accent); }
+
+  /* STATUS BADGE */
+  .status-badge { border-radius:4px; display:inline-block; font-size:10px; font-weight:500; letter-spacing:0.5px; padding:2px 8px; white-space:nowrap; }
+
+  /* VIEW PROFILE BTN */
+  .view-profile-btn { background:var(--surface3); border:1px solid var(--border2); border-radius:var(--radius2); color:var(--accent); cursor:pointer; font-family:var(--mono); font-size:11px; padding:3px 10px; transition:all 0.2s; }
+  .view-profile-btn:hover { background:var(--accent); color:#0f0f13; border-color:var(--accent); }
+
+  /* EMPTY STATE */
+  .empty-state { align-items:center; display:flex; flex-direction:column; gap:12px; justify-content:center; padding:80px 20px; color:var(--text3); }
+  .empty-icon { font-size:40px; opacity:0.3; }
+  .empty-title { font-family:var(--sans); font-size:16px; font-weight:700; color:var(--text2); }
+  .empty-sub { font-size:12px; text-align:center; max-width:280px; line-height:1.6; }
+
+  /* PROFILE MODAL */
+  #profile-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:1000; align-items:center; justify-content:center; }
+  #profile-modal.open { display:flex; }
+  .profile-box { background:var(--surface); border:1px solid var(--border2); border-radius:14px; padding:28px 30px; width:520px; max-width:95vw; max-height:85vh; overflow-y:auto; box-shadow:0 12px 40px var(--shadow); }
+  .profile-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:20px; }
+  .profile-name { font-family:var(--sans); font-size:18px; font-weight:700; color:var(--text); }
+  .profile-book { color:var(--text2); font-size:12px; margin-top:4px; }
+  .modal-close { background:var(--surface3); border:none; border-radius:50%; color:var(--text2); cursor:pointer; font-size:16px; height:28px; width:28px; display:flex; align-items:center; justify-content:center; transition:all 0.2s; flex-shrink:0; }
+  .modal-close:hover { background:var(--red); color:white; }
+  .profile-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .profile-field { display:flex; flex-direction:column; gap:4px; }
+  .profile-field.full { grid-column:1/-1; }
+  .profile-label { font-size:10px; color:var(--text3); text-transform:uppercase; letter-spacing:0.8px; }
+  .profile-value { background:var(--surface2); border-radius:var(--radius2); color:var(--text); font-size:12px; line-height:1.5; padding:8px 10px; min-height:32px; word-break:break-word; white-space:normal; }
+  .profile-value a { color:var(--accent); text-decoration:none; }
+  .profile-value a:hover { text-decoration:underline; }
+
+  /* AGENT HEADER */
+  .agent-header { padding:14px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; flex-shrink:0; background:var(--surface); }
+  .agent-avatar { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--sans); font-weight:800; font-size:14px; color:#0f0f13; }
+  .agent-info { flex:1; }
+  .agent-name { font-family:var(--sans); font-weight:700; font-size:14px; }
+  .agent-sub { font-size:11px; color:var(--text2); }
+
+  /* TOAST */
+  #toast { position:fixed; bottom:24px; right:24px; background:var(--surface2); border:1px solid var(--border2); border-radius:var(--radius); color:var(--text); font-size:12px; padding:10px 16px; z-index:9998; opacity:0; transform:translateY(8px); transition:all 0.3s; pointer-events:none; box-shadow:0 4px 16px var(--shadow); }
+  #toast.show { opacity:1; transform:translateY(0); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width:6px; height:6px; }
+  ::-webkit-scrollbar-track { background:var(--bg); }
+  ::-webkit-scrollbar-thumb { background:var(--border2); border-radius:3px; }
+  ::-webkit-scrollbar-thumb:hover { background:var(--text3); }
+
+  .restricted { opacity:0.65; cursor:default !important; }
+
+  /* PHONE CELL — agent view: [copy] [number] [▾ custom btn] */
+  .phone-cell { display:flex; align-items:center; gap:4px; min-width:170px; }
+  .phone-num { flex:1; font-size:12px; transition:color 0.2s; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  /* Custom phone status button (replaces <select> so icon stays fixed) */
+  .ps-wrap { position:relative; flex-shrink:0; }
+  .ps-btn {
+    background:var(--surface3); border:1px solid var(--border); border-radius:3px;
+    color:var(--text3); font-family:var(--mono); font-size:10px; padding:2px 5px;
+    cursor:pointer; outline:none; white-space:nowrap; transition:border-color 0.15s;
+    display:flex; align-items:center; gap:3px;
   }
-  td.row-num { background: var(--surface2); color: var(--text3); font-size: 10px; text-align: center; }
-
-  /* ─── AGENT DROPDOWN COLOR CODING ─── */
-  select.agent-sel {
-    border-radius: var(--radius2); font-family: var(--mono); font-size: 11px;
-    padding: 3px 8px; cursor: pointer; outline: none; border: 1px solid transparent;
-    font-weight: 500; min-width: 130px;
+  .ps-btn:hover { border-color:var(--accent); }
+  .ps-btn .ps-arrow { font-size:8px; opacity:0.6; }
+  .ps-dropdown {
+    position:absolute; right:0; top:calc(100% + 3px);
+    background:var(--surface); border:1px solid var(--border2); border-radius:var(--radius2);
+    box-shadow:0 6px 20px var(--shadow); z-index:100; min-width:160px; overflow:hidden; display:none;
   }
-  select.agent-sel.unassigned { background: var(--surface3); color: var(--text2); border-color: var(--border); }
-  select.agent-sel.a1 { background: rgba(85,153,238,0.15); color: var(--a1); border-color: rgba(85,153,238,0.4); }
-  select.agent-sel.a2 { background: rgba(232,135,58,0.15); color: var(--a2); border-color: rgba(232,135,58,0.4); }
-  select.agent-sel.a3 { background: rgba(168,112,238,0.15); color: var(--a3); border-color: rgba(168,112,238,0.4); }
-  select.agent-sel.a4 { background: rgba(62,207,120,0.15); color: var(--a4); border-color: rgba(62,207,120,0.4); }
-
-  /* ─── CELL DROPDOWNS ─── */
-  select.cell-select {
-    background: var(--surface3); border: 1px solid var(--border); border-radius: var(--radius2);
-    color: var(--text); font-family: var(--mono); font-size: 11px; padding: 3px 6px;
-    cursor: pointer; outline: none; max-width: 150px;
+  .ps-dropdown.open { display:block; }
+  .ps-option {
+    padding:7px 12px; font-size:11px; font-family:var(--mono);
+    cursor:pointer; transition:background 0.1s; display:flex; align-items:center; gap:8px;
   }
-  select.cell-select:focus { border-color: var(--accent); }
+  .ps-option:hover { background:var(--surface2); }
+  .ps-option .ps-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
 
-  /* ─── EDITABLE CELLS ─── */
-  td[contenteditable="true"] { outline: none; cursor: text; }
-  td[contenteditable="true"]:focus { background: var(--surface3); box-shadow: inset 0 0 0 1px var(--accent); }
+  /* MASTERLIST phone — editable input */
+  .ml-phone-wrap { display:flex; align-items:center; gap:4px; min-width:130px; }
+  .ml-phone-num { flex:1; background:transparent; border:none; outline:none; font-family:var(--mono); font-size:12px; color:var(--text); cursor:text; transition:color 0.2s; min-width:0; }
+  .ml-phone-num:focus { background:var(--surface3); border-radius:3px; padding:1px 4px; }
 
-  /* ─── LEAD STATUS BADGES ─── */
-  .status-badge {
-    border-radius: 4px; display: inline-block; font-size: 10px;
-    font-weight: 500; letter-spacing: 0.5px; padding: 2px 8px; white-space: nowrap;
+  /* COPY BTN (phone + email) */
+  .copy-btn {
+    background:transparent; border:1px solid var(--border); border-radius:3px;
+    color:var(--text3); font-size:10px; padding:1px 5px; cursor:pointer;
+    flex-shrink:0; transition:all 0.15s; font-family:var(--mono); white-space:nowrap; line-height:1.4;
   }
+  .copy-btn:hover { border-color:var(--accent); color:var(--accent); }
+  .copy-btn.copied { border-color:var(--green); color:var(--green); }
 
-  /* ─── VIEW PROFILE BTN ─── */
-  .view-profile-btn {
-    background: var(--surface3); border: 1px solid var(--border2); border-radius: var(--radius2);
-    color: var(--accent); cursor: pointer; font-family: var(--mono); font-size: 11px;
-    padding: 3px 10px; transition: all 0.2s;
-  }
-  .view-profile-btn:hover { background: var(--accent); color: #0f0f13; border-color: var(--accent); }
+  /* EMAIL CELL */
+  .email-cell { display:flex; align-items:center; gap:5px; min-width:140px; max-width:220px; }
+  .email-text { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; }
 
-  /* ─── EMPTY STATE ─── */
-  .empty-state {
-    align-items: center; display: flex; flex-direction: column;
-    gap: 12px; justify-content: center; padding: 80px 20px; color: var(--text3);
-  }
-  .empty-icon { font-size: 40px; opacity: 0.3; }
-  .empty-title { font-family: var(--sans); font-size: 16px; font-weight: 700; color: var(--text2); }
-  .empty-sub { font-size: 12px; text-align: center; max-width: 280px; line-height: 1.6; }
+  /* DELETE BTN */
+  .del-btn { background:transparent; border:1px solid transparent; border-radius:3px; color:var(--text3); font-size:13px; padding:1px 5px; cursor:pointer; transition:all 0.15s; }
+  .del-btn:hover { border-color:var(--red); color:var(--red); background:rgba(224,85,85,0.08); }
+  td.del-cell { width:30px; min-width:30px; padding:3px 4px; text-align:center; }
 
-  /* ─── PROFILE MODAL ─── */
-  #profile-modal {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.55); z-index: 1000; align-items: center; justify-content: center;
-  }
-  #profile-modal.open { display: flex; }
-  .profile-box {
-    background: var(--surface); border: 1px solid var(--border2); border-radius: 14px;
-    padding: 28px 30px; width: 500px; max-width: 95vw; max-height: 85vh; overflow-y: auto;
-    box-shadow: 0 12px 40px var(--shadow);
-  }
-  .profile-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; }
-  .profile-name { font-family: var(--sans); font-size: 18px; font-weight: 700; color: var(--text); }
-  .profile-book { color: var(--text2); font-size: 12px; margin-top: 4px; }
-  .modal-close {
-    background: var(--surface3); border: none; border-radius: 50%; color: var(--text2);
-    cursor: pointer; font-size: 16px; height: 28px; width: 28px;
-    display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0;
-  }
-  .modal-close:hover { background: var(--red); color: white; }
-  .profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .profile-field { display: flex; flex-direction: column; gap: 4px; }
-  .profile-field.full { grid-column: 1 / -1; }
-  .profile-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.8px; }
-  .profile-value {
-    background: var(--surface2); border-radius: var(--radius2); color: var(--text);
-    font-size: 12px; line-height: 1.5; padding: 8px 10px; min-height: 32px;
-    word-break: break-word; white-space: normal;
-  }
-  .profile-value a { color: var(--accent); text-decoration: none; }
-  .profile-value a:hover { text-decoration: underline; }
-
-  /* ─── AGENT TAB HEADER ─── */
-  .agent-header {
-    padding: 14px 20px; border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 12px; flex-shrink: 0;
-    background: var(--surface);
-  }
-  .agent-avatar {
-    width: 34px; height: 34px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--sans); font-weight: 800; font-size: 14px; color: #0f0f13;
-  }
-  .agent-info { flex: 1; }
-  .agent-name { font-family: var(--sans); font-weight: 700; font-size: 14px; }
-  .agent-sub { font-size: 11px; color: var(--text2); }
-
-  /* ─── SYNC STATUS ─── */
-  .sync-dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    display: inline-block; margin-right: 5px;
-    background: var(--text3);
-    transition: background 0.3s;
-  }
-  .sync-dot.live { background: var(--green); box-shadow: 0 0 6px var(--green); }
-  .sync-dot.saving { background: var(--yellow); }
-  .sync-dot.error { background: var(--red); }
-  .sync-label { font-size: 10px; color: var(--text3); }
-
-  /* ─── TOAST ─── */
-  #toast {
-    position: fixed; bottom: 24px; right: 24px; background: var(--surface2);
-    border: 1px solid var(--border2); border-radius: var(--radius); color: var(--text);
-    font-size: 12px; padding: 10px 16px; z-index: 9998;
-    opacity: 0; transform: translateY(8px); transition: all 0.3s; pointer-events: none;
-    box-shadow: 0 4px 16px var(--shadow);
-  }
-  #toast.show { opacity: 1; transform: translateY(0); }
-
-  /* ─── SCROLLBAR ─── */
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
-
-  .restricted { opacity: 0.65; cursor: default !important; }
-
-  /* ─── PHONE CELLS ─── */
-  .phone-cell { display: flex; align-items: center; gap: 5px; min-width: 155px; }
-  .phone-num { flex: 1; font-size: 12px; transition: color 0.2s; }
-  select.phone-status {
-    background: var(--surface3); border: 1px solid var(--border); border-radius: 3px;
-    color: var(--text3); font-family: var(--mono); font-size: 10px; padding: 2px 3px;
-    cursor: pointer; outline: none; width: 22px; text-align: center;
-  }
-  select.phone-status:focus { border-color: var(--accent); width: auto; }
-
-  /* ─── MASTERLIST PHONE INPUTS ─── */
-  .ml-phone-wrap { display: flex; align-items: center; gap: 5px; min-width: 130px; }
-  .ml-phone-num {
-    flex: 1; background: transparent; border: none; outline: none;
-    font-family: var(--mono); font-size: 12px; color: var(--text);
-    cursor: text; transition: color 0.2s;
-  }
-  .ml-phone-num:focus { background: var(--surface3); border-radius: 3px; padding: 1px 4px; }
-
-  /* ─── EMAIL CELL ─── */
-  .email-cell { display: flex; align-items: center; gap: 5px; min-width: 140px; max-width: 220px; }
-  .email-text { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; cursor: default; }
-  .email-copy-btn {
-    background: transparent; border: 1px solid var(--border); border-radius: 3px;
-    color: var(--text3); font-size: 10px; padding: 1px 5px; cursor: pointer;
-    flex-shrink: 0; transition: all 0.15s; font-family: var(--mono); white-space: nowrap;
-  }
-  .email-copy-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .email-copy-btn.copied { border-color: var(--green); color: var(--green); }
-
-  /* ─── NO RESULTS ─── */
-  .no-results td { text-align: center; color: var(--text3); padding: 24px; font-size: 12px; }
-
-  /* ─── COLOR GUIDE BAR ─── */
-  .color-guide {
-    padding: 7px 14px; display: flex; align-items: center; gap: 14px;
-    border-bottom: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap;
-    background: var(--bg);
-  }
-  .guide-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.8px; white-space: nowrap; }
-  .guide-items { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-  .guide-item { display: flex; align-items: center; gap: 5px; white-space: nowrap; }
-  .guide-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .guide-dot.gd-default { background: var(--text); border: 1px solid var(--border2); }
-  .guide-dot.gd-tta    { background: var(--green); }
-  .guide-dot.gd-wn     { background: var(--red); }
-  .guide-dot.gd-vm     { background: var(--blue); }
-  .guide-dot.gd-nis    { background: var(--orange); }
-  .guide-dot.gd-na     { background: var(--purple); }
-  .guide-text { font-size: 10px; color: var(--text2); }
-
-  /* ─── DELETE BTN ─── */
-  .del-btn {
-    background: transparent; border: 1px solid transparent; border-radius: 3px;
-    color: var(--text3); font-size: 13px; padding: 1px 5px; cursor: pointer;
-    line-height: 1; transition: all 0.15s; flex-shrink: 0;
-  }
-  .del-btn:hover { border-color: var(--red); color: var(--red); background: rgba(224,85,85,0.08); }
-  td.del-cell { width: 30px; min-width: 30px; padding: 3px 4px; text-align: center; border-right: 1px solid var(--border); }
+  /* NO RESULTS */
+  .no-results td { text-align:center; color:var(--text3); padding:24px; font-size:12px; }
 </style>
 </head>
 <body>
 
-<!-- ════ LOADING OVERLAY ════ -->
 <div id="loading-overlay">
   <div class="loading-spinner"></div>
   <div class="loading-text">Connecting to Firebase…</div>
 </div>
 
-<!-- ════ LOGIN SCREEN ════ -->
 <div id="login-screen" style="display:none">
   <div class="login-box">
-    <div class="login-logo">
-      Lead Portal
-      <span>Pristine Press &amp; Media</span>
-    </div>
-    <div class="login-field">
-      <label>Username</label>
-      <input type="text" id="login-user" placeholder="Enter username" autocomplete="off">
-    </div>
-    <div class="login-field">
-      <label>Password</label>
-      <input type="password" id="login-pass" placeholder="Enter password">
-    </div>
+    <div class="login-logo">Lead Portal<span>Pristine Press &amp; Media</span></div>
+    <div class="login-field"><label>Username</label><input type="text" id="login-user" placeholder="Enter username" autocomplete="off"></div>
+    <div class="login-field"><label>Password</label><input type="password" id="login-pass" placeholder="Enter password"></div>
     <div class="login-error" id="login-error">Invalid credentials. Please try again.</div>
     <button class="login-btn" onclick="doLogin()">Sign In</button>
     <div class="login-theme">
-      <button class="theme-toggle" onclick="toggleTheme()">
-        <span class="icon" id="theme-icon">☀️</span>
-        <span id="theme-label">Light Mode</span>
-      </button>
+      <button class="theme-toggle" onclick="toggleTheme()"><span id="theme-icon">☀️</span><span id="theme-label">Light Mode</span></button>
     </div>
   </div>
 </div>
 
-<!-- ════ APP ════ -->
 <div id="app">
   <div class="app-header">
     <div class="app-title">Lead Assignment Portal</div>
     <div class="app-user">
       <span class="sync-dot" id="sync-dot"></span>
       <span class="sync-label" id="sync-label">—</span>
-      <div class="toolbar-sep" style="margin:0 4px"></div>
-      <button class="theme-toggle" onclick="toggleTheme()">
-        <span class="icon" id="theme-icon-app">🌙</span>
-        <span id="theme-label-app">Dark Mode</span>
-      </button>
+      <div class="toolbar-sep"></div>
+      <button class="theme-toggle" onclick="toggleTheme()"><span id="theme-icon-app">🌙</span><span id="theme-label-app">Dark Mode</span></button>
       <div class="user-badge" id="user-badge">—</div>
       <button class="logout-btn" onclick="doLogout()">Sign Out</button>
     </div>
   </div>
-
   <div class="tab-bar" id="tab-bar"></div>
 
-  <!-- MASTERLIST TAB -->
+  <!-- MASTERLIST -->
   <div class="tab-content" id="tab-masterlist">
     <div class="toolbar">
       <div class="toolbar-title">Masterlist</div>
@@ -541,13 +331,13 @@
         <option value="nurture">Nurture</option>
         <option value="meeting">Booked a Meeting</option>
         <option value="closed">Closed</option>
+        <option value="lost">Lost Deal</option>
       </select>
       <button class="clear-filters-btn" onclick="clearMlFilters()">✕ Clear Filters</button>
       <span class="search-count" id="ml-filter-count"></span>
     </div>
-    <!-- PHONE STATUS COLOR GUIDE -->
     <div class="color-guide">
-      <span class="guide-label">Phone Status Guide:</span>
+      <span class="guide-label">Phone Status:</span>
       <div class="guide-items">
         <div class="guide-item"><div class="guide-dot gd-default"></div><span class="guide-text">Not yet dialed</span></div>
         <div class="guide-item"><div class="guide-dot gd-tta"></div><span class="guide-text" style="color:var(--green)">TTA – Correct Number</span></div>
@@ -570,14 +360,13 @@
     </div>
   </div>
 
-  <!-- AGENT TABS (1-4) -->
   <div class="tab-content" id="tab-agent1"></div>
   <div class="tab-content" id="tab-agent2"></div>
   <div class="tab-content" id="tab-agent3"></div>
   <div class="tab-content" id="tab-agent4"></div>
 </div>
 
-<!-- ════ PROFILE MODAL ════ -->
+<!-- PROFILE MODAL -->
 <div id="profile-modal">
   <div class="profile-box">
     <div class="profile-header">
@@ -591,776 +380,623 @@
   </div>
 </div>
 
-<!-- ════ TOAST ════ -->
 <div id="toast"></div>
 
-<!-- Firebase SDK (modular via CDN compat build) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
 <script>
-// ══════════════════════════════════════════
-//  FIREBASE INIT
-// ══════════════════════════════════════════
+// ── FIREBASE ──
 const firebaseConfig = {
-  apiKey: "AIzaSyAPEModaJ70pG6OA7EymWCdiXfxGGsdmrU",
-  authDomain: "lead-assignment-portal.firebaseapp.com",
-  projectId: "lead-assignment-portal",
-  storageBucket: "lead-assignment-portal.firebasestorage.app",
-  messagingSenderId: "306387696620",
-  appId: "1:306387696620:web:d45130b85a96815f0b9ec9"
+  apiKey:"AIzaSyAPEModaJ70pG6OA7EymWCdiXfxGGsdmrU",
+  authDomain:"lead-assignment-portal.firebaseapp.com",
+  projectId:"lead-assignment-portal",
+  storageBucket:"lead-assignment-portal.firebasestorage.app",
+  messagingSenderId:"306387696620",
+  appId:"1:306387696620:web:d45130b85a96815f0b9ec9"
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const LEADS_DOC = db.collection('portal').doc('masterlist');
 
-// ══════════════════════════════════════════
-//  CONSTANTS
-// ══════════════════════════════════════════
+// ── CONSTANTS ──
 const USERS = {
-  admin:  { pass: 'admin123',  role: 'admin',  label: 'Admin (Lead Owner)' },
-  agent1: { pass: 'agent123',  role: 'agent1', label: 'Agent 1' },
-  agent2: { pass: 'agent223',  role: 'agent2', label: 'Agent 2' },
-  agent3: { pass: 'agent323',  role: 'agent3', label: 'Agent 3' },
-  agent4: { pass: 'agent423',  role: 'agent4', label: 'Agent 4' },
+  admin:  { pass:'admin123', role:'admin',  label:'Admin (Lead Owner)' },
+  agent1: { pass:'agent123', role:'agent1', label:'Agent 1' },
+  agent2: { pass:'agent223', role:'agent2', label:'Agent 2' },
+  agent3: { pass:'agent323', role:'agent3', label:'Agent 3' },
+  agent4: { pass:'agent423', role:'agent4', label:'Agent 4' },
 };
-
 const AGENTS = ['Agent 1','Agent 2','Agent 3','Agent 4'];
-const AGENT_COLORS = { 'Agent 1':'a1', 'Agent 2':'a2', 'Agent 3':'a3', 'Agent 4':'a4' };
+const AGENT_COLORS = { 'Agent 1':'a1','Agent 2':'a2','Agent 3':'a3','Agent 4':'a4' };
 
 const COL_HEADERS = [
   'Lead Owner','Assigned Agent','Author','Book Title',
   'Phone 1','Phone 2','Phone 3','Email',
-  'Age','Work','Address','Est. Property Price',
+  'Age','Profession','Address','Est. Property Price',
   'Website/Social','Amazon BookLink','About Author',
   'Recommended Services','Lead Status','Notes/Remarks'
 ];
 
 const PHONE_STATUS_OPTS = [
-  { val: '',    label: '—' },
-  { val: 'TTA', label: 'TTA - Correct' },
-  { val: 'WN',  label: 'Wrong Number' },
-  { val: 'VM',  label: 'Voicemail' },
-  { val: 'NIS', label: 'Not in Service' },
-  { val: 'NA',  label: 'No Answer' },
+  { val:'',    label:'Not yet dialed',    color:'var(--text)',   dot:'gd-default' },
+  { val:'TTA', label:'TTA – Correct',     color:'var(--green)',  dot:'gd-tta' },
+  { val:'WN',  label:'Wrong Number',      color:'var(--red)',    dot:'gd-wn' },
+  { val:'VM',  label:'Voicemail',         color:'var(--blue)',   dot:'gd-vm' },
+  { val:'NIS', label:'Not in Service',    color:'var(--orange)', dot:'gd-nis' },
+  { val:'NA',  label:'No Answer',         color:'var(--purple)', dot:'gd-na' },
 ];
 const PHONE_COLOR_MAP = { TTA:'var(--green)', WN:'var(--red)', VM:'var(--blue)', NIS:'var(--orange)', NA:'var(--purple)' };
 
 const LEAD_STATUS_OPTS = [
-  { val: '',         label: '— Status —',       color: null,      bg: null },
-  { val: 'approach', label: 'Approaching',      color: '#0f0f13', bg: 'var(--yellow)' },
-  { val: 'interest', label: 'Interested',       color: '#0f0f13', bg: 'var(--green)' },
-  { val: 'notint',   label: 'Not Interested',   color: '#fff',    bg: 'var(--red)' },
-  { val: 'nurture',  label: 'Nurture',          color: '#0f0f13', bg: 'var(--lightblue)' },
-  { val: 'meeting',  label: 'Booked a Meeting', color: '#fff',    bg: 'var(--blue)' },
-  { val: 'closed',   label: 'Closed',           color: '#fff',    bg: 'var(--orange)' },
+  { val:'',        label:'— Status —',       color:null,       bg:null },
+  { val:'approach',label:'Approaching',      color:'#0f0f13',  bg:'var(--yellow)' },
+  { val:'interest',label:'Interested',       color:'#0f0f13',  bg:'var(--green)' },
+  { val:'notint',  label:'Not Interested',   color:'#fff',     bg:'var(--red)' },
+  { val:'nurture', label:'Nurture',          color:'#0f0f13',  bg:'var(--lightblue)' },
+  { val:'meeting', label:'Booked a Meeting', color:'#fff',     bg:'var(--blue)' },
+  { val:'closed',  label:'Closed',           color:'#fff',     bg:'var(--orange)' },
+  { val:'lost',    label:'Lost Deal',        color:'#fff',     bg:'var(--grey)' },
 ];
 const LEAD_STATUS_MAP = {};
 LEAD_STATUS_OPTS.forEach(o => { if(o.val) LEAD_STATUS_MAP[o.val] = o; });
 
+// Masterlist visible columns (indices into COL_HEADERS):
+// Lead Owner(0), Assigned Agent(1), Author(2), Book Title(3),
+// Phone 1(4), Phone 2(5), Phone 3(6), Email(7), Lead Status(16), Notes(17)
+// + Author Profile button
+const ML_COL_IDX  = [0, 1, 2, 3, 4, 5, 6, 7, 16, 17];
+const ML_COL_SHOW_PROFILE = true;
+
+// Agent col labels (same order, profile at end)
 const AGENT_COL_LABELS = ['Author','Book Title','Phone 1','Phone 2','Phone 3','Email','Lead Status','Notes/Remarks','Author Profile'];
-const PROFILE_IDX = [8,9,10,11,12,13,14,15];
-const PROFILE_LABELS = ['Age','Work','Address','Est. Property Price','Website/Social','Amazon BookLink','About Author','Recommended Services'];
 
-// ══════════════════════════════════════════
-//  STATE
-// ══════════════════════════════════════════
-let currentUser = null;
-let leads = [];
-let _suppressRemoteRender = false; // prevent echo loop when we just saved
-let _unsubscribe = null;
-let mlFilters = { agent: '', status: '' };
-const agentSearch = { 1:'', 2:'', 3:'', 4:'' };
-const agentStatusFilter = { 1:'', 2:'', 3:'', 4:'' };
+// Profile popup fields (indices 8-15)
+const PROFILE_IDX    = [8,9,10,11,12,13,14,15];
+const PROFILE_LABELS = ['Age','Profession','Address','Est. Property Price','Website/Social','Amazon BookLink','About Author','Recommended Services'];
 
-// ══════════════════════════════════════════
-//  THEME
-// ══════════════════════════════════════════
-function applyTheme(theme) {
-  document.documentElement.setAttribute('data-theme', theme);
-  localStorage.setItem('lp_theme', theme);
-  const isDark = theme === 'dark';
-  const icon = isDark ? '☀️' : '🌙';
-  const label = isDark ? 'Light Mode' : 'Dark Mode';
-  const iconLogin = document.getElementById('theme-icon');
-  const iconApp   = document.getElementById('theme-icon-app');
-  const lblLogin  = document.getElementById('theme-label');
-  const lblApp    = document.getElementById('theme-label-app');
-  if (iconLogin) iconLogin.textContent = icon;
-  if (iconApp)   iconApp.textContent = icon;
-  if (lblLogin)  lblLogin.textContent = label;
-  if (lblApp)    lblApp.textContent = label;
+// ── STATE ──
+let currentUser = null, leads = [], _suppressRemoteRender = false, _unsubscribe = null;
+let mlFilters = { agent:'', status:'' };
+const agentSearch = {1:'',2:'',3:'',4:''};
+const agentStatusFilter = {1:'',2:'',3:'',4:''};
+
+// ── THEME ──
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  localStorage.setItem('lp_theme', t);
+  const dark = t==='dark';
+  const icon = dark?'☀️':'🌙', lbl = dark?'Light Mode':'Dark Mode';
+  ['theme-icon','theme-icon-app'].forEach(id => { const e=document.getElementById(id); if(e) e.textContent=icon; });
+  ['theme-label','theme-label-app'].forEach(id => { const e=document.getElementById(id); if(e) e.textContent=lbl; });
 }
+function toggleTheme() { applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark'); }
+applyTheme(localStorage.getItem('lp_theme')||'dark');
 
-function toggleTheme() {
-  const cur = document.documentElement.getAttribute('data-theme');
-  applyTheme(cur === 'dark' ? 'light' : 'dark');
-}
-
-// Init theme from localStorage
-applyTheme(localStorage.getItem('lp_theme') || 'dark');
-
-// ══════════════════════════════════════════
-//  SYNC STATUS
-// ══════════════════════════════════════════
+// ── SYNC STATUS ──
 function setSyncStatus(state, msg) {
-  const dot = document.getElementById('sync-dot');
-  const lbl = document.getElementById('sync-label');
-  if (!dot) return;
-  dot.className = 'sync-dot ' + state;
-  lbl.textContent = msg;
+  const dot=document.getElementById('sync-dot'), lbl=document.getElementById('sync-label');
+  if(!dot) return;
+  dot.className='sync-dot '+state; lbl.textContent=msg;
 }
 
-// ══════════════════════════════════════════
-//  FIREBASE PERSISTENCE
-// ══════════════════════════════════════════
+// ── FIREBASE ──
 function saveState() {
-  setSyncStatus('saving', 'Saving…');
+  setSyncStatus('saving','Saving…');
   _suppressRemoteRender = true;
-  LEADS_DOC.set({ leads: leads })
-    .then(() => {
-      setSyncStatus('live', 'Live');
-      setTimeout(() => { _suppressRemoteRender = false; }, 600);
-    })
-    .catch(err => {
-      console.error('Save error:', err);
-      setSyncStatus('error', 'Save failed');
-      _suppressRemoteRender = false;
-    });
+  LEADS_DOC.set({ leads })
+    .then(() => { setSyncStatus('live','Live'); setTimeout(()=>{ _suppressRemoteRender=false; },600); })
+    .catch(err => { console.error(err); setSyncStatus('error','Save failed'); _suppressRemoteRender=false; });
 }
-
 function startRealtimeListener() {
-  if (_unsubscribe) _unsubscribe();
-  setSyncStatus('saving', 'Connecting…');
+  if(_unsubscribe) _unsubscribe();
+  setSyncStatus('saving','Connecting…');
   _unsubscribe = LEADS_DOC.onSnapshot(doc => {
-    if (_suppressRemoteRender) return;
-    if (doc.exists) {
-      leads = doc.data().leads || [];
-    } else {
-      leads = [];
-    }
-    setSyncStatus('live', 'Live');
+    if(_suppressRemoteRender) return;
+    leads = doc.exists ? (doc.data().leads||[]) : [];
+    setSyncStatus('live','Live');
     renderAll();
-  }, err => {
-    console.error('Listener error:', err);
-    setSyncStatus('error', 'Connection error');
-  });
+  }, err => { console.error(err); setSyncStatus('error','Connection error'); });
 }
+function stopRealtimeListener() { if(_unsubscribe){ _unsubscribe(); _unsubscribe=null; } }
 
-function stopRealtimeListener() {
-  if (_unsubscribe) { _unsubscribe(); _unsubscribe = null; }
-}
-
-// ══════════════════════════════════════════
-//  ROW HELPER
-// ══════════════════════════════════════════
+// ── ROW HELPER ──
 function rowObj(arr) {
   const o = {};
-  COL_HEADERS.forEach((h,i) => o[h] = (arr[i] !== undefined ? String(arr[i]).trim() : ''));
-  if (!o._phoneStatus1) o._phoneStatus1 = '';
-  if (!o._phoneStatus2) o._phoneStatus2 = '';
-  if (!o._phoneStatus3) o._phoneStatus3 = '';
-  if (!o._leadStatus)   o._leadStatus = '';
+  COL_HEADERS.forEach((h,i) => o[h] = arr[i]!==undefined ? String(arr[i]).trim() : '');
+  ['_phoneStatus1','_phoneStatus2','_phoneStatus3','_leadStatus'].forEach(k => { if(!o[k]) o[k]=''; });
   return o;
 }
 
-// ══════════════════════════════════════════
-//  LOGIN
-// ══════════════════════════════════════════
+// ── LOGIN ──
 function doLogin() {
-  const u = document.getElementById('login-user').value.trim().toLowerCase();
-  const p = document.getElementById('login-pass').value;
-  const err = document.getElementById('login-error');
-  if (USERS[u] && USERS[u].pass === p) {
-    currentUser = { username: u, ...USERS[u] };
-    err.style.display = 'none';
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('app').style.display = 'flex';
-    document.getElementById('user-badge').textContent = currentUser.label;
-    buildTabs();
-    startRealtimeListener();
-  } else {
-    err.style.display = 'block';
-  }
+  const u=document.getElementById('login-user').value.trim().toLowerCase();
+  const p=document.getElementById('login-pass').value;
+  const err=document.getElementById('login-error');
+  if(USERS[u]&&USERS[u].pass===p) {
+    currentUser={username:u,...USERS[u]};
+    err.style.display='none';
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='flex';
+    document.getElementById('user-badge').textContent=currentUser.label;
+    buildTabs(); startRealtimeListener();
+  } else { err.style.display='block'; }
 }
-document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
-document.getElementById('login-user').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
-
+document.getElementById('login-pass').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
+document.getElementById('login-user').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
 function doLogout() {
-  stopRealtimeListener();
-  currentUser = null;
-  leads = [];
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('login-user').value = '';
-  document.getElementById('login-pass').value = '';
-  setSyncStatus('', '—');
+  stopRealtimeListener(); currentUser=null; leads=[];
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('app').style.display='none';
+  document.getElementById('login-user').value='';
+  document.getElementById('login-pass').value='';
+  setSyncStatus('','—');
 }
 
-// ══════════════════════════════════════════
-//  TABS
-// ══════════════════════════════════════════
+// ── TABS ──
 function buildTabs() {
-  const bar = document.getElementById('tab-bar');
-  bar.innerHTML = '';
-  const tabs = [];
-  if (currentUser.role === 'admin') {
-    tabs.push({ id: 'masterlist', label: '📋 Masterlist' });
-    AGENTS.forEach((a,i) => tabs.push({ id: `agent${i+1}`, label: `👤 ${a}` }));
+  const bar=document.getElementById('tab-bar'); bar.innerHTML='';
+  const tabs=[];
+  if(currentUser.role==='admin') {
+    tabs.push({id:'masterlist',label:'📋 Masterlist'});
+    AGENTS.forEach((a,i)=>tabs.push({id:`agent${i+1}`,label:`👤 ${a}`}));
   } else {
-    const idx = currentUser.role.replace('agent','');
-    tabs.push({ id: `agent${idx}`, label: `👤 Agent ${idx}` });
+    const idx=currentUser.role.replace('agent','');
+    tabs.push({id:`agent${idx}`,label:`👤 Agent ${idx}`});
   }
-  tabs.forEach((t, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'tab-btn' + (i===0?' active':'');
-    btn.textContent = t.label;
-    btn.dataset.tab = t.id;
-    btn.onclick = () => switchTab(t.id);
-    bar.appendChild(btn);
+  tabs.forEach((t,i)=>{
+    const btn=document.createElement('button');
+    btn.className='tab-btn'+(i===0?' active':'');
+    btn.textContent=t.label; btn.dataset.tab=t.id;
+    btn.onclick=()=>switchTab(t.id); bar.appendChild(btn);
   });
   switchTab(tabs[0].id);
 }
-
 function switchTab(id) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === id));
-  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
   document.getElementById(`tab-${id}`).classList.add('active');
 }
 
-// ══════════════════════════════════════════
-//  FILE UPLOAD
-// ══════════════════════════════════════════
+// ── FILE UPLOAD ──
 document.getElementById('file-input').addEventListener('change', function(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const name = file.name.toLowerCase();
-  if (name.endsWith('.csv')) {
-    const reader = new FileReader();
-    reader.onload = ev => parseCSV(ev.target.result);
-    reader.readAsText(file);
-  } else if (name.endsWith('.xls') || name.endsWith('.xlsx')) {
-    const reader = new FileReader();
-    reader.onload = ev => parseXLS(ev.target.result);
-    reader.readAsArrayBuffer(file);
-  }
-  this.value = '';
+  const file=e.target.files[0]; if(!file) return;
+  const name=file.name.toLowerCase();
+  if(name.endsWith('.csv')) { const r=new FileReader(); r.onload=ev=>parseCSV(ev.target.result); r.readAsText(file); }
+  else if(name.endsWith('.xls')||name.endsWith('.xlsx')) { const r=new FileReader(); r.onload=ev=>parseXLS(ev.target.result); r.readAsArrayBuffer(file); }
+  this.value='';
 });
-
 function parseCSV(text) {
-  const lines = text.split('\n').filter(l => l.trim());
-  if (!lines.length) return;
-  const first = lines[0].split(',');
-  const startRow = (first[0].toLowerCase().includes('lead') || first[0].toLowerCase().includes('owner') || isNaN(first[0])) ? 1 : 0;
-  importRows(lines.slice(startRow).map(r => csvLineToArr(r)));
+  const lines=text.split('\n').filter(l=>l.trim()); if(!lines.length) return;
+  const first=lines[0].split(',');
+  const start=(first[0].toLowerCase().includes('lead')||first[0].toLowerCase().includes('owner')||isNaN(first[0]))?1:0;
+  importRows(lines.slice(start).map(csvLineToArr));
 }
-
 function csvLineToArr(line) {
-  const result = []; let cur = '', inQ = false;
-  for (let i = 0; i < line.length; i++) {
-    if (line[i] === '"') { inQ = !inQ; }
-    else if (line[i] === ',' && !inQ) { result.push(cur); cur = ''; }
-    else cur += line[i];
+  const r=[]; let cur='',inQ=false;
+  for(let i=0;i<line.length;i++){
+    if(line[i]==='"'){inQ=!inQ;}
+    else if(line[i]===','&&!inQ){r.push(cur);cur='';}
+    else cur+=line[i];
   }
-  result.push(cur);
-  return result;
+  r.push(cur); return r;
 }
-
-function parseXLS(buffer) {
-  const wb = XLSX.read(buffer, { type: 'array' });
-  const ws = wb.Sheets[wb.SheetNames[0]];
-  const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
-  const first = data[0] || [];
-  const startRow = (typeof first[0] === 'string' && (first[0].toLowerCase().includes('lead') || first[0].toLowerCase().includes('owner'))) ? 1 : 0;
-  importRows(data.slice(startRow));
+function parseXLS(buf) {
+  const wb=XLSX.read(buf,{type:'array'}); const ws=wb.Sheets[wb.SheetNames[0]];
+  const data=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+  const first=data[0]||[];
+  const start=(typeof first[0]==='string'&&(first[0].toLowerCase().includes('lead')||first[0].toLowerCase().includes('owner')))?1:0;
+  importRows(data.slice(start));
 }
-
 function importRows(rows) {
-  let added = 0;
-  rows.forEach(arr => {
-    if (!arr || arr.length === 0) return;
-    if (!arr.some(c => String(c).trim() !== '')) return;
-    leads.push(rowObj(arr));
-    added++;
+  let added=0;
+  rows.forEach(arr=>{
+    if(!arr||!arr.length||!arr.some(c=>String(c).trim()!=='')) return;
+    leads.push(rowObj(arr)); added++;
   });
-  saveState();
-  renderAll();
-  toast(`✓ Imported ${added} leads`);
+  saveState(); renderAll(); toast(`✓ Imported ${added} leads`);
 }
 
-// ══════════════════════════════════════════
-//  FILTERS
-// ══════════════════════════════════════════
+// ── FILTERS ──
 function applyMlFilters() {
-  mlFilters.agent  = document.getElementById('f-agent').value;
-  mlFilters.status = document.getElementById('f-status').value;
-  ['f-agent','f-status'].forEach(id => {
-    const el = document.getElementById(id);
-    el.classList.toggle('filter-active', el.value !== '');
-  });
+  mlFilters.agent=document.getElementById('f-agent').value;
+  mlFilters.status=document.getElementById('f-status').value;
+  ['f-agent','f-status'].forEach(id=>{ const e=document.getElementById(id); e.classList.toggle('filter-active',e.value!==''); });
   renderMasterlist();
 }
-
 function clearMlFilters() {
-  ['f-agent','f-status'].forEach(id => {
-    const el = document.getElementById(id);
-    el.value = '';
-    el.classList.remove('filter-active');
-  });
-  mlFilters = { agent: '', status: '' };
-  renderMasterlist();
+  ['f-agent','f-status'].forEach(id=>{ const e=document.getElementById(id); e.value=''; e.classList.remove('filter-active'); });
+  mlFilters={agent:'',status:''}; renderMasterlist();
 }
-
 function passesFilter(lead) {
-  if (mlFilters.agent) {
-    if (mlFilters.agent === 'unassigned' && lead['Assigned Agent']) return false;
-    if (mlFilters.agent !== 'unassigned' && lead['Assigned Agent'] !== mlFilters.agent) return false;
+  if(mlFilters.agent) {
+    if(mlFilters.agent==='unassigned'&&lead['Assigned Agent']) return false;
+    if(mlFilters.agent!=='unassigned'&&lead['Assigned Agent']!==mlFilters.agent) return false;
   }
-  if (mlFilters.status && lead._leadStatus !== mlFilters.status) return false;
+  if(mlFilters.status&&lead._leadStatus!==mlFilters.status) return false;
   return true;
 }
 
-// ══════════════════════════════════════════
-//  RENDER
-// ══════════════════════════════════════════
+// ── RENDER ALL ──
 function renderAll() {
-  if (currentUser && currentUser.role === 'admin') renderMasterlist();
-  for (let i = 1; i <= 4; i++) {
-    if (document.getElementById(`tab-agent${i}`)) renderAgent(i);
-  }
+  if(currentUser&&currentUser.role==='admin') renderMasterlist();
+  for(let i=1;i<=4;i++) { if(document.getElementById(`tab-agent${i}`)) renderAgent(i); }
 }
 
-// ── MASTERLIST ──
+// ══════════════════════════════════════════
+//  MASTERLIST RENDER
+// ══════════════════════════════════════════
 function renderMasterlist() {
-  const total = leads.length;
-  document.getElementById('ml-count').textContent = `${total} lead${total !== 1 ? 's' : ''}`;
-  const empty = document.getElementById('ml-empty');
-  const table = document.getElementById('ml-table');
+  const total=leads.length;
+  document.getElementById('ml-count').textContent=`${total} lead${total!==1?'s':''}`;
+  const empty=document.getElementById('ml-empty'), table=document.getElementById('ml-table');
+  if(!total){ empty.style.display='flex'; table.style.display='none'; document.getElementById('ml-filter-count').textContent=''; return; }
+  empty.style.display='none'; table.style.display='';
 
-  if (!total) {
-    empty.style.display = 'flex'; table.style.display = 'none';
-    document.getElementById('ml-filter-count').textContent = '';
-    return;
-  }
-  empty.style.display = 'none'; table.style.display = '';
+  const filtered=leads.filter(passesFilter);
+  const hasFilter=mlFilters.agent||mlFilters.status;
+  document.getElementById('ml-filter-count').textContent=hasFilter?`${filtered.length} of ${total} shown`:'';
 
-  const filtered = leads.filter(passesFilter);
-  const hasFilter = mlFilters.agent || mlFilters.status;
-  document.getElementById('ml-filter-count').textContent = hasFilter ? `${filtered.length} of ${total} shown` : '';
-
-  // Header
-  const thead = document.getElementById('ml-thead');
-  thead.innerHTML = '';
-  const tr = document.createElement('tr');
-  const thN = document.createElement('th'); thN.textContent = '#'; tr.appendChild(thN);
-  const thDel = document.createElement('th'); thDel.textContent = ''; thDel.style.width='30px'; thDel.style.minWidth='30px'; tr.appendChild(thDel);
-  COL_HEADERS.forEach(h => { const th = document.createElement('th'); th.textContent = h; tr.appendChild(th); });
+  // Header — columns: # | del | Lead Owner | Assigned Agent | Author | Book Title | Phone1 | Phone2 | Phone3 | Email | Lead Status | Notes | Profile
+  const thead=document.getElementById('ml-thead'); thead.innerHTML='';
+  const tr=document.createElement('tr');
+  const mkTh=(txt,w)=>{ const th=document.createElement('th'); th.textContent=txt; if(w) th.style.minWidth=w; return th; };
+  tr.appendChild(mkTh('#'));
+  tr.appendChild(mkTh('',  '30px'));
+  tr.appendChild(mkTh('Lead Owner','110px'));
+  tr.appendChild(mkTh('Assigned Agent','140px'));
+  tr.appendChild(mkTh('Author','130px'));
+  tr.appendChild(mkTh('Book Title','160px'));
+  tr.appendChild(mkTh('Phone 1','170px'));
+  tr.appendChild(mkTh('Phone 2','170px'));
+  tr.appendChild(mkTh('Phone 3','170px'));
+  tr.appendChild(mkTh('Email','160px'));
+  tr.appendChild(mkTh('Lead Status','140px'));
+  tr.appendChild(mkTh('Notes/Remarks','160px'));
+  tr.appendChild(mkTh('Author Profile','110px'));
   thead.appendChild(tr);
 
-  // Body
-  const tbody = document.getElementById('ml-tbody');
-  tbody.innerHTML = '';
-
-  if (!filtered.length) {
-    const nr = document.createElement('tr');
-    nr.className = 'no-results';
-    const td = document.createElement('td'); td.colSpan = COL_HEADERS.length + 2;
-    td.textContent = 'No leads match the current filters.';
+  const tbody=document.getElementById('ml-tbody'); tbody.innerHTML='';
+  if(!filtered.length) {
+    const nr=document.createElement('tr'); nr.className='no-results';
+    const td=document.createElement('td'); td.colSpan=13; td.textContent='No leads match the current filters.';
     nr.appendChild(td); tbody.appendChild(nr); return;
   }
 
   filtered.forEach(lead => {
-    const globalIdx = leads.indexOf(lead);
-    const row = document.createElement('tr');
+    const gi=leads.indexOf(lead);
+    const row=document.createElement('tr');
 
-    const tdN = document.createElement('td');
-    tdN.className = 'row-num'; tdN.textContent = globalIdx + 1; row.appendChild(tdN);
+    // # (row num)
+    const tdN=document.createElement('td'); tdN.className='row-num'; tdN.textContent=gi+1; row.appendChild(tdN);
 
-    // Delete button cell
-    const tdDel = document.createElement('td'); tdDel.className = 'del-cell';
-    const delBtn = document.createElement('button'); delBtn.className = 'del-btn'; delBtn.textContent = '🗑'; delBtn.title = 'Delete this lead';
-    delBtn.onclick = () => deleteLead(globalIdx);
-    tdDel.appendChild(delBtn); row.appendChild(tdDel);
+    // Delete
+    const tdDel=document.createElement('td'); tdDel.className='del-cell';
+    const delBtn=document.createElement('button'); delBtn.className='del-btn'; delBtn.textContent='🗑'; delBtn.title='Delete lead';
+    delBtn.onclick=()=>deleteLead(gi); tdDel.appendChild(delBtn); row.appendChild(tdDel);
 
-    COL_HEADERS.forEach((h, ci) => {
-      const td = document.createElement('td');
+    // Lead Owner (plain)
+    const tdOwner=document.createElement('td'); tdOwner.textContent=lead['Lead Owner']||''; tdOwner.title=lead['Lead Owner']||''; row.appendChild(tdOwner);
 
-      if (ci === 1) {
-        // Agent dropdown
-        const sel = document.createElement('select');
-        sel.className = 'agent-sel';
-        const emptyOpt = document.createElement('option');
-        emptyOpt.value = ''; emptyOpt.textContent = '— Unassigned —';
-        sel.appendChild(emptyOpt);
-        AGENTS.forEach(a => {
-          const opt = document.createElement('option');
-          opt.value = a; opt.textContent = a;
-          if (lead['Assigned Agent'] === a) opt.selected = true;
-          sel.appendChild(opt);
-        });
-        const applyAgentColor = val => { sel.className = 'agent-sel ' + (AGENT_COLORS[val] || 'unassigned'); };
-        applyAgentColor(lead['Assigned Agent']);
-        sel.addEventListener('change', () => {
-          lead['Assigned Agent'] = sel.value;
-          applyAgentColor(sel.value);
-          saveState();
-          for (let i=1;i<=4;i++) renderAgent(i);
-          toast(`Lead assigned to ${sel.value || 'nobody'}`);
-        });
-        td.appendChild(sel);
+    // Assigned Agent (colored dropdown)
+    const tdAgt=document.createElement('td');
+    const agSel=document.createElement('select'); agSel.className='agent-sel';
+    const eOpt=document.createElement('option'); eOpt.value=''; eOpt.textContent='— Unassigned —'; agSel.appendChild(eOpt);
+    AGENTS.forEach(a=>{ const o=document.createElement('option'); o.value=a; o.textContent=a; if(lead['Assigned Agent']===a) o.selected=true; agSel.appendChild(o); });
+    const setAgColor=v=>{ agSel.className='agent-sel '+(AGENT_COLORS[v]||'unassigned'); };
+    setAgColor(lead['Assigned Agent']);
+    agSel.addEventListener('change',()=>{ lead['Assigned Agent']=agSel.value; setAgColor(agSel.value); saveState(); for(let i=1;i<=4;i++) renderAgent(i); toast(`Assigned to ${agSel.value||'nobody'}`); });
+    tdAgt.appendChild(agSel); row.appendChild(tdAgt);
 
-      } else if (ci === 4 || ci === 5 || ci === 6) {
-        // Editable phone
-        const pi = ci - 4;
-        const statusKey = `_phoneStatus${pi+1}`;
-        const wrap = document.createElement('div'); wrap.className = 'ml-phone-wrap';
-        const inp = document.createElement('input');
-        inp.type = 'text'; inp.className = 'ml-phone-num'; inp.value = lead[h] || '';
-        const cs = lead[statusKey] || '';
-        if (cs && PHONE_COLOR_MAP[cs]) inp.style.color = PHONE_COLOR_MAP[cs];
-        inp.addEventListener('blur', () => {
-          const newVal = inp.value.trim();
-          if (newVal !== lead[h]) {
-            lead[h] = newVal;
-            lead[statusKey] = '';
-            inp.style.color = 'var(--text)';
-            saveState();
-            renderAgent(agentNumFromLead(lead));
-          }
-        });
-        inp.addEventListener('keydown', e => { if(e.key==='Enter') inp.blur(); });
-        wrap.appendChild(inp); td.appendChild(wrap); td.style.padding = '4px 6px';
+    // Author
+    const tdAu=document.createElement('td'); tdAu.textContent=lead['Author']||''; tdAu.title=lead['Author']||''; row.appendChild(tdAu);
 
-      } else if (ci === 16) {
-        td.appendChild(makeLeadStatusBadge(lead._leadStatus));
-      } else {
-        td.textContent = lead[h] || ''; td.title = lead[h] || '';
-      }
-      row.appendChild(td);
+    // Book Title
+    const tdBk=document.createElement('td'); tdBk.textContent=lead['Book Title']||''; tdBk.title=lead['Book Title']||''; row.appendChild(tdBk);
+
+    // Phone 1,2,3 — editable inputs in masterlist
+    ['Phone 1','Phone 2','Phone 3'].forEach((ph,pi)=>{
+      const td=document.createElement('td'); td.style.padding='4px 6px';
+      const wrap=document.createElement('div'); wrap.className='ml-phone-wrap';
+      const inp=document.createElement('input'); inp.type='text'; inp.className='ml-phone-num'; inp.value=lead[ph]||'';
+      const sk=`_phoneStatus${pi+1}`;
+      const cs=lead[sk]||'';
+      if(cs&&PHONE_COLOR_MAP[cs]) inp.style.color=PHONE_COLOR_MAP[cs];
+      inp.addEventListener('blur',()=>{
+        const v=inp.value.trim();
+        if(v!==lead[ph]){ lead[ph]=v; lead[sk]=''; inp.style.color='var(--text)'; saveState(); const an=agentNumFromLead(lead); if(an) renderAgent(an); }
+      });
+      inp.addEventListener('keydown',e=>{ if(e.key==='Enter') inp.blur(); });
+      wrap.appendChild(inp); td.appendChild(wrap); row.appendChild(td);
     });
+
+    // Email
+    const tdEm=document.createElement('td'); tdEm.style.padding='4px 8px';
+    const emWrap=document.createElement('div'); emWrap.className='email-cell';
+    const emText=document.createElement('span'); emText.className='email-text'; emText.textContent=lead['Email']||'—'; emText.title=lead['Email']||'';
+    const emCopy=makeCopyBtn(()=>lead['Email']);
+    emWrap.appendChild(emText); emWrap.appendChild(emCopy); tdEm.appendChild(emWrap); row.appendChild(tdEm);
+
+    // Lead Status (badge in masterlist — read only visual; agents change it)
+    const tdSt=document.createElement('td'); tdSt.style.padding='4px 8px';
+    tdSt.appendChild(makeLeadStatusBadge(lead._leadStatus)); row.appendChild(tdSt);
+
+    // Notes
+    const tdNo=document.createElement('td'); tdNo.contentEditable='true'; tdNo.textContent=lead['Notes/Remarks']||''; tdNo.style.minWidth='160px';
+    tdNo.addEventListener('blur',()=>{ lead['Notes/Remarks']=tdNo.textContent; saveState(); });
+    row.appendChild(tdNo);
+
+    // Author Profile
+    const tdPr=document.createElement('td');
+    const prBtn=document.createElement('button'); prBtn.className='view-profile-btn'; prBtn.textContent='View Profile'; prBtn.onclick=()=>openModal(lead);
+    tdPr.appendChild(prBtn); row.appendChild(tdPr);
+
     tbody.appendChild(row);
+  });
+}
+
+// ══════════════════════════════════════════
+//  AGENT TAB RENDER
+// ══════════════════════════════════════════
+function renderAgent(agentNum) {
+  const agentLabel=`Agent ${agentNum}`;
+  const container=document.getElementById(`tab-agent${agentNum}`); if(!container) return;
+  const allLeads=leads.filter(l=>l['Assigned Agent']===agentLabel);
+  const agColors=['var(--a1)','var(--a2)','var(--a3)','var(--a4)'];
+  container.innerHTML='';
+
+  // Header
+  const hdr=document.createElement('div'); hdr.className='agent-header';
+  hdr.innerHTML=`<div class="agent-avatar" style="background:${agColors[agentNum-1]}">${agentNum}</div><div class="agent-info"><div class="agent-name">${agentLabel}</div><div class="agent-sub">${allLeads.length} lead${allLeads.length!==1?'s':''} assigned</div></div>`;
+  container.appendChild(hdr);
+
+  // Color guide — always visible
+  const guide=document.createElement('div'); guide.className='color-guide';
+  guide.innerHTML=`<span class="guide-label">Phone Status:</span><div class="guide-items">
+    <div class="guide-item"><div class="guide-dot gd-default"></div><span class="guide-text">Not yet dialed</span></div>
+    <div class="guide-item"><div class="guide-dot gd-tta"></div><span class="guide-text" style="color:var(--green)">TTA – Correct Number</span></div>
+    <div class="guide-item"><div class="guide-dot gd-wn"></div><span class="guide-text" style="color:var(--red)">Wrong Number</span></div>
+    <div class="guide-item"><div class="guide-dot gd-vm"></div><span class="guide-text" style="color:var(--blue)">Voicemail</span></div>
+    <div class="guide-item"><div class="guide-dot gd-nis"></div><span class="guide-text" style="color:var(--orange)">Not in Service</span></div>
+    <div class="guide-item"><div class="guide-dot gd-na"></div><span class="guide-text" style="color:var(--purple)">No Answer – For Callback</span></div>
+  </div>`;
+  container.appendChild(guide);
+
+  if(!allLeads.length) {
+    const es=document.createElement('div'); es.className='empty-state';
+    es.innerHTML=`<div class="empty-icon">👤</div><div class="empty-title">No Leads Assigned</div><div class="empty-sub">Assign leads from the Masterlist tab.</div>`;
+    container.appendChild(es); return;
+  }
+
+  // Search + filter bar
+  const sb=document.createElement('div'); sb.className='search-bar';
+  const srch=document.createElement('input'); srch.type='text'; srch.className='search-input'; srch.placeholder='Search by name, phone, email…'; srch.value=agentSearch[agentNum];
+  const stFil=document.createElement('select'); stFil.className='filter-sel';
+  [{val:'',label:'All Statuses'},...LEAD_STATUS_OPTS.filter(o=>o.val)].forEach(o=>{
+    const opt=document.createElement('option'); opt.value=o.val; opt.textContent=o.label;
+    if(o.val===agentStatusFilter[agentNum]) opt.selected=true; stFil.appendChild(opt);
+  });
+  const cnt=document.createElement('span'); cnt.className='search-count';
+  srch.addEventListener('input',()=>{ agentSearch[agentNum]=srch.value; rebuildAgentTable(agentNum,allLeads,tbody,cnt,stFil); });
+  stFil.addEventListener('change',()=>{ agentStatusFilter[agentNum]=stFil.value; stFil.classList.toggle('filter-active',!!stFil.value); rebuildAgentTable(agentNum,allLeads,tbody,cnt,stFil); });
+  if(agentStatusFilter[agentNum]) stFil.classList.add('filter-active');
+  sb.appendChild(srch); sb.appendChild(stFil); sb.appendChild(cnt); container.appendChild(sb);
+
+  // Table
+  const wrap=document.createElement('div'); wrap.className='table-wrap';
+  const table=document.createElement('table');
+  const thead=document.createElement('thead'); const hrow=document.createElement('tr');
+  const mkTh=(t,w)=>{ const th=document.createElement('th'); th.textContent=t; if(w) th.style.minWidth=w; return th; };
+  hrow.appendChild(mkTh('#'));
+  AGENT_COL_LABELS.forEach(l=>hrow.appendChild(mkTh(l)));
+  thead.appendChild(hrow); table.appendChild(thead);
+  const tbody=document.createElement('tbody'); table.appendChild(tbody); wrap.appendChild(table); container.appendChild(wrap);
+  rebuildAgentTable(agentNum,allLeads,tbody,cnt,stFil);
+}
+
+function rebuildAgentTable(agentNum, allLeads, tbody, countEl, stFil) {
+  const q=(agentSearch[agentNum]||'').toLowerCase();
+  const sf=agentStatusFilter[agentNum]||'';
+  const filtered=allLeads.filter(lead=>{
+    if(sf&&lead._leadStatus!==sf) return false;
+    if(q){ const s=[lead['Author'],lead['Book Title'],lead['Phone 1'],lead['Phone 2'],lead['Phone 3'],lead['Email'],lead['Notes/Remarks']].join(' ').toLowerCase(); if(!s.includes(q)) return false; }
+    return true;
+  });
+  const hasF=q||sf;
+  countEl.textContent=hasF?`${filtered.length} of ${allLeads.length} shown`:'';
+  tbody.innerHTML='';
+
+  if(!filtered.length){
+    const nr=document.createElement('tr'); nr.className='no-results';
+    const td=document.createElement('td'); td.colSpan=AGENT_COL_LABELS.length+1; td.textContent=hasF?'No leads match your search.':'No leads assigned.';
+    nr.appendChild(td); tbody.appendChild(nr); return;
+  }
+
+  filtered.forEach((lead,li)=>{
+    const gi=leads.indexOf(lead);
+    const row=document.createElement('tr');
+
+    // #
+    const tdN=document.createElement('td'); tdN.className='row-num'; tdN.textContent=li+1; row.appendChild(tdN);
+
+    // Author (restricted)
+    const tdAu=document.createElement('td'); tdAu.textContent=lead['Author']||''; tdAu.className='restricted'; row.appendChild(tdAu);
+
+    // Book Title (restricted)
+    const tdBk=document.createElement('td'); tdBk.textContent=lead['Book Title']||''; tdBk.className='restricted'; row.appendChild(tdBk);
+
+    // Phone 1,2,3 — [copy] [num] [▾ custom dropdown]
+    ['Phone 1','Phone 2','Phone 3'].forEach((ph,pi)=>{
+      const td=document.createElement('td'); td.style.padding='4px 6px';
+      const wrap=document.createElement('div'); wrap.className='phone-cell';
+      const sk=`_phoneStatus${pi+1}`;
+      const cs=lead[sk]||'';
+
+      // Copy btn
+      const cpBtn=makeCopyBtn(()=>lead[ph]);
+      wrap.appendChild(cpBtn);
+
+      // Number span
+      const numSpan=document.createElement('span'); numSpan.className='phone-num'; numSpan.textContent=lead[ph]||'—';
+      if(cs&&PHONE_COLOR_MAP[cs]) numSpan.style.color=PHONE_COLOR_MAP[cs];
+      wrap.appendChild(numSpan);
+
+      // Custom status button + dropdown
+      const psWrap=document.createElement('div'); psWrap.className='ps-wrap';
+      const psBtn=document.createElement('button'); psBtn.className='ps-btn'; psBtn.title='Set phone status';
+      psBtn.innerHTML=`<span class="ps-arrow">▾</span>`;
+
+      const psDrop=document.createElement('div'); psDrop.className='ps-dropdown';
+      PHONE_STATUS_OPTS.forEach(o=>{
+        const item=document.createElement('div'); item.className='ps-option';
+        item.innerHTML=`<div class="ps-dot ${o.dot}" style="background:${o.color}"></div><span style="color:${o.color}">${o.label}</span>`;
+        item.onclick=(e)=>{
+          e.stopPropagation();
+          lead[sk]=o.val;
+          numSpan.style.color=o.val?PHONE_COLOR_MAP[o.val]:'var(--text)';
+          psDrop.classList.remove('open');
+          saveState();
+          // Sync masterlist phone color immediately
+          syncMasterlistPhoneColor(gi,pi,o.val);
+          renderMasterlist();
+        };
+        psDrop.appendChild(item);
+      });
+
+      psBtn.onclick=(e)=>{ e.stopPropagation(); document.querySelectorAll('.ps-dropdown.open').forEach(d=>d.classList.remove('open')); psDrop.classList.toggle('open'); };
+      psWrap.appendChild(psBtn); psWrap.appendChild(psDrop);
+      wrap.appendChild(psWrap); td.appendChild(wrap); row.appendChild(td);
+    });
+
+    // Email + copy
+    const tdEm=document.createElement('td'); tdEm.style.padding='4px 8px';
+    const emWrap=document.createElement('div'); emWrap.className='email-cell';
+    const emText=document.createElement('span'); emText.className='email-text'; emText.textContent=lead['Email']||'—'; emText.title=lead['Email']||'';
+    const emCopy=makeCopyBtn(()=>lead['Email']);
+    emWrap.appendChild(emText); emWrap.appendChild(emCopy); tdEm.appendChild(emWrap); row.appendChild(tdEm);
+
+    // Lead Status select
+    const tdSt=document.createElement('td'); tdSt.style.padding='4px 8px';
+    tdSt.appendChild(makeLeadStatusSelect(lead,gi)); row.appendChild(tdSt);
+
+    // Notes
+    const tdNo=document.createElement('td'); tdNo.contentEditable='true'; tdNo.textContent=lead['Notes/Remarks']||''; tdNo.style.minWidth='160px';
+    tdNo.addEventListener('blur',()=>{ lead['Notes/Remarks']=tdNo.textContent; saveState(); renderMasterlist(); });
+    row.appendChild(tdNo);
+
+    // Author Profile
+    const tdPr=document.createElement('td');
+    const prBtn=document.createElement('button'); prBtn.className='view-profile-btn'; prBtn.textContent='View Profile'; prBtn.onclick=()=>openModal(lead);
+    tdPr.appendChild(prBtn); row.appendChild(tdPr);
+
+    tbody.appendChild(row);
+  });
+}
+
+// Close dropdowns when clicking outside
+document.addEventListener('click',()=>{ document.querySelectorAll('.ps-dropdown.open').forEach(d=>d.classList.remove('open')); });
+
+// ── SYNC MASTERLIST PHONE COLOR ──
+function syncMasterlistPhoneColor(gi, pi, statusVal) {
+  const tbody=document.getElementById('ml-tbody'); if(!tbody) return;
+  tbody.querySelectorAll('tr').forEach(row=>{
+    const nc=row.querySelector('td.row-num');
+    if(nc&&parseInt(nc.textContent)===gi+1){
+      const tds=row.querySelectorAll('td');
+      // Cols: 0=#, 1=del, 2=owner, 3=agent, 4=author, 5=book, 6=ph1, 7=ph2, 8=ph3
+      const inp=tds[6+pi]?.querySelector('input.ml-phone-num');
+      if(inp) inp.style.color=PHONE_COLOR_MAP[statusVal]||'var(--text)';
+    }
   });
 }
 
 function agentNumFromLead(lead) {
-  const a = lead['Assigned Agent'];
-  if (!a) return null;
-  return parseInt(a.replace('Agent ', ''));
+  const a=lead['Assigned Agent']; if(!a) return null;
+  return parseInt(a.replace('Agent ',''));
 }
 
-function deleteLead(globalIdx) {
-  const lead = leads[globalIdx];
-  if (!lead) return;
-  const name = lead['Author'] || lead['Book Title'] || `Row ${globalIdx + 1}`;
-  if (!confirm(`Delete lead for "${name}"? This cannot be undone.`)) return;
-  leads.splice(globalIdx, 1);
-  saveState();
-  renderAll();
-  toast(`✓ Lead deleted`);
+function deleteLead(gi) {
+  const lead=leads[gi]; if(!lead) return;
+  const name=lead['Author']||lead['Book Title']||`Row ${gi+1}`;
+  if(!confirm(`Delete lead for "${name}"? This cannot be undone.`)) return;
+  leads.splice(gi,1); saveState(); renderAll(); toast('✓ Lead deleted');
 }
 
-// ── AGENT TAB ──
-function renderAgent(agentNum) {
-  const agentLabel = `Agent ${agentNum}`;
-  const container = document.getElementById(`tab-agent${agentNum}`);
-  if (!container) return;
-  const allAgentLeads = leads.filter(l => l['Assigned Agent'] === agentLabel);
-  const agentColors = ['var(--a1)','var(--a2)','var(--a3)','var(--a4)'];
-  const agentColor = agentColors[agentNum-1];
-
-  container.innerHTML = '';
-
-  // Agent header
-  const hdr = document.createElement('div');
-  hdr.className = 'agent-header';
-  hdr.innerHTML = `
-    <div class="agent-avatar" style="background:${agentColor}">${agentNum}</div>
-    <div class="agent-info">
-      <div class="agent-name">${agentLabel}</div>
-      <div class="agent-sub">${allAgentLeads.length} lead${allAgentLeads.length!==1?'s':''} assigned</div>
-    </div>`;
-  container.appendChild(hdr);
-
-  // Phone status color guide — always visible
-  const guide = document.createElement('div'); guide.className = 'color-guide';
-  guide.innerHTML = `
-    <span class="guide-label">Phone Status:</span>
-    <div class="guide-items">
-      <div class="guide-item"><div class="guide-dot gd-default"></div><span class="guide-text">Not yet dialed</span></div>
-      <div class="guide-item"><div class="guide-dot gd-tta"></div><span class="guide-text" style="color:var(--green)">TTA – Correct Number</span></div>
-      <div class="guide-item"><div class="guide-dot gd-wn"></div><span class="guide-text" style="color:var(--red)">Wrong Number</span></div>
-      <div class="guide-item"><div class="guide-dot gd-vm"></div><span class="guide-text" style="color:var(--blue)">Voicemail</span></div>
-      <div class="guide-item"><div class="guide-dot gd-nis"></div><span class="guide-text" style="color:var(--orange)">Not in Service</span></div>
-      <div class="guide-item"><div class="guide-dot gd-na"></div><span class="guide-text" style="color:var(--purple)">No Answer – For Callback</span></div>
-    </div>`;
-  container.appendChild(guide);
-
-  if (!allAgentLeads.length) {
-    const es = document.createElement('div'); es.className = 'empty-state';
-    es.innerHTML = `<div class="empty-icon">👤</div><div class="empty-title">No Leads Assigned</div><div class="empty-sub">Assign leads from the Masterlist tab.</div>`;
-    container.appendChild(es);
-    return;
-  }
-
-  // Search + filter bar
-  const sb = document.createElement('div'); sb.className = 'search-bar';
-  const srchInput = document.createElement('input');
-  srchInput.type = 'text'; srchInput.className = 'search-input';
-  srchInput.placeholder = 'Search by name, phone, email…';
-  srchInput.value = agentSearch[agentNum];
-  const statusFilterSel = document.createElement('select');
-  statusFilterSel.className = 'filter-sel';
-  [{ val:'', label:'All Statuses' }, ...LEAD_STATUS_OPTS.filter(o=>o.val)].forEach(o => {
-    const opt = document.createElement('option');
-    opt.value = o.val; opt.textContent = o.label;
-    if (o.val === agentStatusFilter[agentNum]) opt.selected = true;
-    statusFilterSel.appendChild(opt);
-  });
-  const srchCountEl = document.createElement('span'); srchCountEl.className = 'search-count';
-
-  srchInput.addEventListener('input', () => {
-    agentSearch[agentNum] = srchInput.value;
-    rebuildAgentTable(agentNum, allAgentLeads, tbody, srchCountEl, statusFilterSel);
-  });
-  statusFilterSel.addEventListener('change', () => {
-    agentStatusFilter[agentNum] = statusFilterSel.value;
-    statusFilterSel.classList.toggle('filter-active', !!statusFilterSel.value);
-    rebuildAgentTable(agentNum, allAgentLeads, tbody, srchCountEl, statusFilterSel);
-  });
-  if (agentStatusFilter[agentNum]) statusFilterSel.classList.add('filter-active');
-
-  sb.appendChild(srchInput); sb.appendChild(statusFilterSel); sb.appendChild(srchCountEl);
-  container.appendChild(sb);
-
-  // Table
-  const wrap = document.createElement('div'); wrap.className = 'table-wrap';
-  const table = document.createElement('table');
-  const thead = document.createElement('thead');
-  const hrow = document.createElement('tr');
-  const thN = document.createElement('th'); thN.textContent = '#'; hrow.appendChild(thN);
-  AGENT_COL_LABELS.forEach(l => { const th = document.createElement('th'); th.textContent = l; hrow.appendChild(th); });
-  thead.appendChild(hrow); table.appendChild(thead);
-
-  const tbody = document.createElement('tbody');
-  table.appendChild(tbody); wrap.appendChild(table); container.appendChild(wrap);
-
-  rebuildAgentTable(agentNum, allAgentLeads, tbody, srchCountEl, statusFilterSel);
+// ── COPY BUTTON HELPER ──
+function makeCopyBtn(getVal) {
+  const btn=document.createElement('button'); btn.className='copy-btn'; btn.textContent='⎘'; btn.title='Copy';
+  btn.onclick=()=>{
+    const v=getVal(); if(!v||v==='—') return;
+    navigator.clipboard.writeText(v).then(()=>{ btn.textContent='✓'; btn.classList.add('copied'); setTimeout(()=>{ btn.textContent='⎘'; btn.classList.remove('copied'); },1500); });
+  };
+  return btn;
 }
 
-function rebuildAgentTable(agentNum, allLeads, tbody, countEl, statusSel) {
-  const query = (agentSearch[agentNum] || '').toLowerCase();
-  const statusFilter = agentStatusFilter[agentNum] || '';
-
-  const filtered = allLeads.filter(lead => {
-    if (statusFilter && lead._leadStatus !== statusFilter) return false;
-    if (query) {
-      const searchable = [lead['Author'], lead['Book Title'], lead['Phone 1'], lead['Phone 2'], lead['Phone 3'], lead['Email'], lead['Notes/Remarks']].join(' ').toLowerCase();
-      if (!searchable.includes(query)) return false;
-    }
-    return true;
-  });
-
-  const hasFilter = query || statusFilter;
-  countEl.textContent = hasFilter ? `${filtered.length} of ${allLeads.length} shown` : '';
-  tbody.innerHTML = '';
-
-  if (!filtered.length) {
-    const nr = document.createElement('tr'); nr.className = 'no-results';
-    const td = document.createElement('td'); td.colSpan = AGENT_COL_LABELS.length + 1;
-    td.textContent = hasFilter ? 'No leads match your search.' : 'No leads assigned.';
-    nr.appendChild(td); tbody.appendChild(nr); return;
-  }
-
-  filtered.forEach((lead, localIdx) => {
-    const globalIdx = leads.indexOf(lead);
-    const row = document.createElement('tr');
-
-    const tdN = document.createElement('td'); tdN.className = 'row-num'; tdN.textContent = localIdx + 1; row.appendChild(tdN);
-
-    // Author (restricted)
-    const tdA = document.createElement('td'); tdA.textContent = lead['Author'] || ''; tdA.className = 'restricted'; row.appendChild(tdA);
-
-    // Book Title (restricted)
-    const tdB = document.createElement('td'); tdB.textContent = lead['Book Title'] || ''; tdB.className = 'restricted'; row.appendChild(tdB);
-
-    // Phone 1, 2, 3
-    ['Phone 1','Phone 2','Phone 3'].forEach((ph, pi) => {
-      const td = document.createElement('td'); td.style.padding = '4px 6px';
-      const wrapper = document.createElement('div'); wrapper.className = 'phone-cell';
-      const numSpan = document.createElement('span'); numSpan.className = 'phone-num';
-      numSpan.textContent = lead[ph] || '—';
-      const statusKey = `_phoneStatus${pi+1}`;
-      const cs = lead[statusKey] || '';
-      if (cs && PHONE_COLOR_MAP[cs]) numSpan.style.color = PHONE_COLOR_MAP[cs];
-      const sel = document.createElement('select'); sel.className = 'phone-status'; sel.title = 'Set phone status';
-      PHONE_STATUS_OPTS.forEach(o => {
-        const opt = document.createElement('option'); opt.value = o.val; opt.textContent = o.label;
-        if (o.val === cs) opt.selected = true;
-        sel.appendChild(opt);
-      });
-      sel.addEventListener('change', () => {
-        lead[statusKey] = sel.value;
-        numSpan.style.color = PHONE_COLOR_MAP[sel.value] || 'var(--text)';
-        saveState();
-        syncMasterlistPhoneColor(globalIdx, pi, sel.value);
-      });
-      wrapper.appendChild(numSpan); wrapper.appendChild(sel); td.appendChild(wrapper); row.appendChild(td);
-    });
-
-    // Email with copy
-    const tdEmail = document.createElement('td'); tdEmail.style.padding = '4px 8px';
-    const emailWrap = document.createElement('div'); emailWrap.className = 'email-cell';
-    const emailText = document.createElement('span'); emailText.className = 'email-text';
-    emailText.textContent = lead['Email'] || '—'; emailText.title = lead['Email'] || '';
-    const copyBtn = document.createElement('button'); copyBtn.className = 'email-copy-btn';
-    copyBtn.textContent = '⎘'; copyBtn.title = 'Copy email';
-    copyBtn.onclick = () => {
-      if (!lead['Email']) return;
-      navigator.clipboard.writeText(lead['Email']).then(() => {
-        copyBtn.textContent = '✓'; copyBtn.classList.add('copied');
-        setTimeout(() => { copyBtn.textContent = '⎘'; copyBtn.classList.remove('copied'); }, 1500);
-      });
-    };
-    emailWrap.appendChild(emailText); emailWrap.appendChild(copyBtn); tdEmail.appendChild(emailWrap); row.appendChild(tdEmail);
-
-    // Lead Status
-    const tdStatus = document.createElement('td'); tdStatus.style.padding = '4px 8px';
-    tdStatus.appendChild(makeLeadStatusSelect(lead, globalIdx)); row.appendChild(tdStatus);
-
-    // Notes
-    const tdNotes = document.createElement('td');
-    tdNotes.contentEditable = 'true'; tdNotes.textContent = lead['Notes/Remarks'] || ''; tdNotes.style.minWidth = '160px';
-    tdNotes.addEventListener('blur', () => {
-      lead['Notes/Remarks'] = tdNotes.textContent;
-      saveState(); renderMasterlist();
-    });
-    row.appendChild(tdNotes);
-
-    // Author Profile
-    const tdProfile = document.createElement('td');
-    const btn = document.createElement('button'); btn.className = 'view-profile-btn';
-    btn.textContent = 'View Profile'; btn.onclick = () => openModal(lead);
-    tdProfile.appendChild(btn); row.appendChild(tdProfile);
-
-    tbody.appendChild(row);
-  });
-}
-
-function syncMasterlistPhoneColor(globalIdx, phoneIdx, statusVal) {
-  const tbody = document.getElementById('ml-tbody');
-  if (!tbody) return;
-  tbody.querySelectorAll('tr').forEach(row => {
-    const numCell = row.querySelector('td.row-num');
-    if (numCell && parseInt(numCell.textContent) === globalIdx + 1) {
-      const tds = row.querySelectorAll('td');
-      const inp = tds[5 + phoneIdx]?.querySelector('input.ml-phone-num');
-      if (inp) inp.style.color = PHONE_COLOR_MAP[statusVal] || 'var(--text)';
-    }
-  });
-}
-
-// ══════════════════════════════════════════
-//  LEAD STATUS
-// ══════════════════════════════════════════
+// ── LEAD STATUS ──
 function makeLeadStatusBadge(val) {
-  const info = LEAD_STATUS_MAP[val];
-  const span = document.createElement('span');
-  if (info) {
-    span.className = 'status-badge'; span.textContent = info.label;
-    span.style.background = info.bg; span.style.color = info.color;
-  } else {
-    span.style.color = 'var(--text3)'; span.textContent = '—';
-  }
+  const info=LEAD_STATUS_MAP[val];
+  const span=document.createElement('span');
+  if(info){ span.className='status-badge'; span.textContent=info.label; span.style.background=info.bg; span.style.color=info.color; }
+  else { span.style.color='var(--text3)'; span.textContent='—'; }
   return span;
 }
-
-function makeLeadStatusSelect(lead, globalIdx) {
-  const sel = document.createElement('select'); sel.className = 'cell-select';
-  LEAD_STATUS_OPTS.forEach(o => {
-    const opt = document.createElement('option'); opt.value = o.val; opt.textContent = o.label;
-    if (o.val === (lead._leadStatus || '')) opt.selected = true;
-    sel.appendChild(opt);
-  });
-  const applyStyle = val => {
-    const info = LEAD_STATUS_MAP[val];
-    if (info) { sel.style.background = info.bg; sel.style.color = info.color; sel.style.borderColor = 'transparent'; }
-    else { sel.style.background = 'var(--surface3)'; sel.style.color = 'var(--text)'; sel.style.borderColor = 'var(--border)'; }
-  };
-  applyStyle(lead._leadStatus || '');
-  sel.addEventListener('change', () => {
-    lead._leadStatus = sel.value;
-    lead['Lead Status'] = LEAD_STATUS_MAP[sel.value]?.label || '';
-    applyStyle(sel.value); saveState(); renderMasterlist();
-  });
+function makeLeadStatusSelect(lead, gi) {
+  const sel=document.createElement('select'); sel.className='cell-select';
+  LEAD_STATUS_OPTS.forEach(o=>{ const opt=document.createElement('option'); opt.value=o.val; opt.textContent=o.label; if(o.val===(lead._leadStatus||'')) opt.selected=true; sel.appendChild(opt); });
+  const applyStyle=v=>{ const info=LEAD_STATUS_MAP[v]; if(info){ sel.style.background=info.bg; sel.style.color=info.color; sel.style.borderColor='transparent'; } else { sel.style.background='var(--surface3)'; sel.style.color='var(--text)'; sel.style.borderColor='var(--border)'; } };
+  applyStyle(lead._leadStatus||'');
+  sel.addEventListener('change',()=>{ lead._leadStatus=sel.value; lead['Lead Status']=LEAD_STATUS_MAP[sel.value]?.label||''; applyStyle(sel.value); saveState(); renderMasterlist(); });
   return sel;
 }
 
-// ══════════════════════════════════════════
-//  PROFILE MODAL
-// ══════════════════════════════════════════
+// ── PROFILE MODAL ──
 function openModal(lead) {
-  document.getElementById('modal-author').textContent = lead['Author'] || '—';
-  document.getElementById('modal-book').textContent = lead['Book Title'] || '';
-  const body = document.getElementById('modal-body'); body.innerHTML = '';
-  PROFILE_IDX.forEach((ci, pi) => {
-    const key = COL_HEADERS[ci]; const val = lead[key] || '—';
-    const field = document.createElement('div'); field.className = 'profile-field' + (pi >= 6 ? ' full' : '');
-    const label = document.createElement('div'); label.className = 'profile-label'; label.textContent = PROFILE_LABELS[pi];
-    const value = document.createElement('div'); value.className = 'profile-value';
-    if (val !== '—' && (val.startsWith('http') || val.startsWith('www.'))) {
-      const a = document.createElement('a'); a.href = val.startsWith('http') ? val : 'https://'+val;
-      a.target = '_blank'; a.textContent = val; value.appendChild(a);
-    } else { value.textContent = val; }
-    field.appendChild(label); field.appendChild(value); body.appendChild(field);
+  document.getElementById('modal-author').textContent=lead['Author']||'—';
+  document.getElementById('modal-book').textContent=lead['Book Title']||'';
+  const body=document.getElementById('modal-body'); body.innerHTML='';
+  PROFILE_IDX.forEach((ci,pi)=>{
+    const key=COL_HEADERS[ci], val=lead[key]||'—';
+    const field=document.createElement('div'); field.className='profile-field'+(pi>=6?' full':'');
+    const lbl=document.createElement('div'); lbl.className='profile-label'; lbl.textContent=PROFILE_LABELS[pi];
+    const vdiv=document.createElement('div'); vdiv.className='profile-value';
+    // Amazon BookLink — show as short link
+    if(PROFILE_LABELS[pi]==='Amazon BookLink'&&val!=='—') {
+      const a=document.createElement('a'); a.href=val.startsWith('http')?val:'https://'+val; a.target='_blank'; a.textContent='View on Amazon ↗'; vdiv.appendChild(a);
+    } else if(val!=='—'&&(val.startsWith('http')||val.startsWith('www.'))) {
+      const a=document.createElement('a'); a.href=val.startsWith('http')?val:'https://'+val; a.target='_blank'; a.textContent='View Link ↗'; vdiv.appendChild(a);
+    } else { vdiv.textContent=val; }
+    field.appendChild(lbl); field.appendChild(vdiv); body.appendChild(field);
   });
   document.getElementById('profile-modal').classList.add('open');
 }
 function closeModal() { document.getElementById('profile-modal').classList.remove('open'); }
-document.getElementById('profile-modal').addEventListener('click', e => {
-  if(e.target === document.getElementById('profile-modal')) closeModal();
-});
+document.getElementById('profile-modal').addEventListener('click',e=>{ if(e.target===document.getElementById('profile-modal')) closeModal(); });
 
-// ══════════════════════════════════════════
-//  EXPORT / CLEAR
-// ══════════════════════════════════════════
+// ── EXPORT / CLEAR ──
 function exportMasterlist() {
-  if (!leads.length) { toast('No leads to export'); return; }
-  const header = COL_HEADERS.join(',');
-  const rows = leads.map(l => COL_HEADERS.map(h => `"${(l[h]||'').replace(/"/g,'""')}"`).join(','));
-  const csv = [header, ...rows].join('\n');
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = `masterlist_${new Date().toISOString().slice(0,10)}.csv`; a.click();
-  toast('✓ Exported masterlist');
+  if(!leads.length){ toast('No leads to export'); return; }
+  const csv=[COL_HEADERS.join(','),...leads.map(l=>COL_HEADERS.map(h=>`"${(l[h]||'').replace(/"/g,'""')}"`).join(','))].join('\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download=`masterlist_${new Date().toISOString().slice(0,10)}.csv`; a.click(); toast('✓ Exported');
 }
-
 function clearMasterlist() {
-  if (!leads.length) return;
-  if (!confirm(`Clear all ${leads.length} leads? This cannot be undone.`)) return;
-  leads = []; saveState(); renderAll(); toast('Masterlist cleared');
+  if(!leads.length) return;
+  if(!confirm(`Clear all ${leads.length} leads? This cannot be undone.`)) return;
+  leads=[]; saveState(); renderAll(); toast('Masterlist cleared');
 }
 
-// ══════════════════════════════════════════
-//  TOAST
-// ══════════════════════════════════════════
+// ── TOAST ──
 let toastTimer;
-function toast(msg) {
-  const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show');
-  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 2500);
-}
+function toast(msg) { const e=document.getElementById('toast'); e.textContent=msg; e.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>e.classList.remove('show'),2500); }
 
-// ══════════════════════════════════════════
-//  INIT — hide loading, show login
-// ══════════════════════════════════════════
-window.addEventListener('load', () => {
-  // Small delay so Firebase SDK fully initializes
-  setTimeout(() => {
-    const overlay = document.getElementById('loading-overlay');
-    overlay.classList.add('hidden');
-    setTimeout(() => { overlay.style.display = 'none'; }, 300);
-    document.getElementById('login-screen').style.display = 'flex';
-  }, 800);
+// ── INIT ──
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    const ov=document.getElementById('loading-overlay');
+    ov.classList.add('hidden');
+    setTimeout(()=>ov.style.display='none',300);
+    document.getElementById('login-screen').style.display='flex';
+  },800);
 });
 </script>
 </body>
