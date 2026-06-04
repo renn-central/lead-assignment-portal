@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lead Assignment Portal</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+
 <style>
   :root {
     --radius: 8px; --radius2: 4px;
-    --mono: 'DM Mono', monospace; --sans: 'Syne', sans-serif;
+    --mono: Arial, Helvetica, sans-serif; --sans: Arial, Helvetica, sans-serif;
     --green: #3ecf78; --red: #e05555; --blue: #5599ee;
     --orange: #e8873a; --purple: #a870ee; --lightblue: #55c8e8;
     --yellow: #e8d045; --grey: #7a7a8c;
@@ -293,6 +293,8 @@
   }
 
   .restricted { opacity:0.65; cursor:default !important; }
+  .cell-author { font-weight:700; }
+  .cell-book   { font-style:italic; }
 
   /* PHONE CELL — agent view: [copy] [number] [▾ custom btn] */
   .phone-cell { display:flex; align-items:center; gap:4px; min-width:170px; }
@@ -967,10 +969,10 @@ function renderMasterlist() {
     tdAgt.appendChild(agSel); row.appendChild(tdAgt);
 
     // Author
-    const tdAu=document.createElement('td'); tdAu.textContent=lead['Author']||''; tdAu.title=lead['Author']||''; row.appendChild(tdAu);
+    const tdAu=document.createElement('td'); tdAu.className='cell-author'; tdAu.textContent=lead['Author']||''; tdAu.title=lead['Author']||''; row.appendChild(tdAu);
 
     // Book Title
-    const tdBk=document.createElement('td'); tdBk.textContent=lead['Book Title']||''; tdBk.title=lead['Book Title']||''; row.appendChild(tdBk);
+    const tdBk=document.createElement('td'); tdBk.className='cell-book'; tdBk.textContent=lead['Book Title']||''; tdBk.title=lead['Book Title']||''; row.appendChild(tdBk);
 
     // Phone 1,2,3 — editable inputs in masterlist
     ['Phone 1','Phone 2','Phone 3'].forEach((ph,pi)=>{
@@ -1098,10 +1100,10 @@ function rebuildAgentTable(agentNum, allLeads, tbody, countEl, stFil) {
     const tdN=document.createElement('td'); tdN.className='row-num'; tdN.textContent=li+1; row.appendChild(tdN);
 
     // Author (restricted)
-    const tdAu=document.createElement('td'); tdAu.textContent=lead['Author']||''; tdAu.className='restricted'; row.appendChild(tdAu);
+    const tdAu=document.createElement('td'); tdAu.textContent=lead['Author']||''; tdAu.className='restricted cell-author'; row.appendChild(tdAu);
 
     // Book Title (restricted)
-    const tdBk=document.createElement('td'); tdBk.textContent=lead['Book Title']||''; tdBk.className='restricted'; row.appendChild(tdBk);
+    const tdBk=document.createElement('td'); tdBk.textContent=lead['Book Title']||''; tdBk.className='restricted cell-book'; row.appendChild(tdBk);
 
     // Phone 1,2,3 — [copy] [num] [▾ custom dropdown]
     ['Phone 1','Phone 2','Phone 3'].forEach((ph,pi)=>{
